@@ -1,44 +1,38 @@
 from obra import Obra
 from genero import Genero
-from autor import Autor
 from volume import Volume
 
 
 class Manga(Obra):
-    def __init__(self, 
-                 titulo: str, 
-                 ano: int, 
-                 genero: Genero, 
-                 autor: Autor, 
-                 num_volumes: int, 
-                 numero_vol: int, 
+    def __init__(self,
+                 titulo: str,
+                 ano: int,
+                 genero: Genero,
+                 num_volumes: int,
+                 numero_vol: int,
                  num_capitulos_vol: int):
         super().__init__(titulo, ano, genero)
         self.__autor = None
         self.__num_volumes = None
         self.__volumes = []
-        if isinstance(autor, Autor):
-            self.__autor = autor
         if isinstance(num_volumes, int):
             self.__num_volumes = num_volumes
         if isinstance(numero_vol, int) and isinstance(num_capitulos_vol, int):
             self.__volumes.append(Volume(numero_vol, num_capitulos_vol))
 
     @property
-    def autor(self) -> Autor:
+    def autor(self):
         return self.__autor
 
-    @autor.setter
-    def autor(self, autor: Autor):
-        if isinstance(autor, Autor):
-            self.__autor = autor
+    def config_autor(self, autor):
+        self.__autor = autor
 
     @property
     def num_volumes(self) -> int:
         return self.__num_volumes
 
     @num_volumes.setter
-    def num_volumes(self, num_volumes: int):
+    def num_volumes(self, num_volumes):
         if isinstance(num_volumes, int):
             self.__num_volumes = num_volumes
 

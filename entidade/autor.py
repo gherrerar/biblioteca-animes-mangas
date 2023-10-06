@@ -18,5 +18,6 @@ class Autor:
             self.__nome = nome
 
     def add_manga(self, manga: Manga):
-        if isinstance(manga, Manga):
+        if isinstance(manga, Manga) and manga not in self.__mangas_produzidos:
+            manga.config_autor(self)
             self.__mangas_produzidos.append(manga)
