@@ -18,5 +18,6 @@ class Estudio:
             self.__nome = nome
 
     def add_anime(self, anime: Anime):
-        if isinstance(anime, Anime):
+        if isinstance(anime, Anime) and anime not in self.__animes_produzidos:
+            anime.config_estudio(self)
             self.__animes_produzidos.append(anime)

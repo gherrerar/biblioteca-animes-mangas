@@ -1,6 +1,5 @@
 from obra import Obra
 from genero import Genero
-from estudio import Estudio
 from temporada import Temporada
 
 
@@ -9,7 +8,6 @@ class Anime(Obra):
                  titulo: str,
                  ano: int,
                  genero: Genero,
-                 estudio: Estudio,
                  num_temporadas: int,
                  numero_temp: int,
                  num_episodios_temp: int):
@@ -17,21 +15,17 @@ class Anime(Obra):
         self.__estudio = None
         self.__num_temporadas = None
         self.__temporadas = []
-        if isinstance(estudio, Estudio):
-            self.__estudio = estudio
         if isinstance(num_temporadas, int):
             self.__num_temporadas = num_temporadas
         if isinstance(numero_temp, int) and isinstance(num_episodios_temp, int):
             self.__temporadas.append(Temporada(numero_temp, num_episodios_temp))
 
     @property
-    def estudio(self) -> Estudio:
+    def estudio(self):
         return self.__estudio
 
-    @estudio.setter
-    def estudio(self, estudio: Estudio):
-        if isinstance(estudio, Estudio):
-            self.__estudio = estudio
+    def config_estudio(self, estudio):
+        self.__estudio = estudio
 
     @property
     def num_temporadas(self) -> int:
