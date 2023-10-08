@@ -1,5 +1,5 @@
-from exemplar import Estado, Exemplar
-from manga import Manga
+from entidade.exemplar import Estado, Exemplar
+from entidade.manga import Manga
 
 
 class ExemplarManga(Exemplar):

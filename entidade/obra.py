@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from genero import Genero
+from entidade.genero import Genero
 
 
 class Obra(ABC):

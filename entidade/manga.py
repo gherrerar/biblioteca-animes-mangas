@@ -1,6 +1,6 @@
-from obra import Obra
-from genero import Genero
-from volume import Volume
+from entidade.obra import Obra
+from entidade.genero import Genero
+from entidade.volume import Volume
 
 
 class Manga(Obra):

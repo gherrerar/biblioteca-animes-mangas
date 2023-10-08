@@ -1,4 +1,4 @@
-from episodio import Episodio
+from entidade.episodio import Episodio
 
 
 class Temporada:

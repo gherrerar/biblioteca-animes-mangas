@@ -1,4 +1,4 @@
-from capitulo import Capitulo
+from entidade.capitulo import Capitulo
 
 
 class Volume:

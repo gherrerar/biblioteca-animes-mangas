@@ -1,6 +1,6 @@
-from obra import Obra
-from genero import Genero
-from temporada import Temporada
+from entidade.obra import Obra
+from entidade.genero import Genero
+from entidade.temporada import Temporada
 
 
 class Anime(Obra):

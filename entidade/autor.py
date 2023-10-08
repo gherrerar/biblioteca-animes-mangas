@@ -1,4 +1,4 @@
-from manga import Manga
+from entidade.manga import Manga
 
 
 class Autor:

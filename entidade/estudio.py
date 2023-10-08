@@ -1,4 +1,4 @@
-from anime import Anime
+from entidade.anime import Anime
 
 
 class Estudio:

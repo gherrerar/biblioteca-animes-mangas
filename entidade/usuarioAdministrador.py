@@ -1,4 +1,4 @@
-from usuario import Usuario
+from entidade.usuario import Usuario
 
 
 class UsuarioAdministrador(Usuario):
