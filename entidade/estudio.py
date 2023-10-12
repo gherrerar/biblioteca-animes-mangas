@@ -17,6 +17,10 @@ class Estudio:
         if isinstance(nome, str):
             self.__nome = nome
 
+    @property
+    def animes_produzidos(self) -> list[Anime]:
+        return self.__animes_produzidos
+
     def add_anime(self, anime: Anime):
         if isinstance(anime, Anime) and anime not in self.__animes_produzidos:
             anime.config_estudio(self)

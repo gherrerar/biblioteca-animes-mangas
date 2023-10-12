@@ -17,6 +17,10 @@ class Autor:
         if isinstance(nome, str):
             self.__nome = nome
 
+    @property
+    def mangas_produzidos(self) -> list[Manga]:
+        return self.__mangas_produzidos
+
     def add_manga(self, manga: Manga):
         if isinstance(manga, Manga) and manga not in self.__mangas_produzidos:
             manga.config_autor(self)
