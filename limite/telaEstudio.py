@@ -20,7 +20,7 @@ class TelaEstudio(AbstractTela):
             self.mostra_mensagem("Nenhum estudio foi cadastrado!")
         else:
             print("NOME:", dados_estudio['nome'])
-            print("ANIMES:", dados_estudio['animes'])
+            print("ANIMES:", dados_estudio['animes'] or 'Nenhum vinculado')
             print()
 
     def recolhe_dados_estudio(self) -> str:

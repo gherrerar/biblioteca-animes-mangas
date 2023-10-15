@@ -20,7 +20,7 @@ class TelaAutor(AbstractTela):
             self.mostra_mensagem("Nenhum autor foi cadastrado!")
         else:
             print("NOME:", dados_autor['nome'])
-            print("MANGAS:", dados_autor['mangas'])
+            print("MANGAS:", dados_autor['mangas'] or 'Nenhum vinculado')
             print()
 
     def recolhe_dados_autor(self) -> str:
