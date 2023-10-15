@@ -190,3 +190,6 @@ class CtrlAnime(AbstractCtrl):
                 if ani.titulo == titulo:
                     return ani
             return None
+
+    def retornar(self):
+        self.ctrl_principal.acessar_usuario_admin()

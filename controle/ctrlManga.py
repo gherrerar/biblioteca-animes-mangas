@@ -190,3 +190,6 @@ class CtrlManga(AbstractCtrl):
                 if manga.titulo == titulo:
                     return manga
             return None
+
+    def retornar(self):
+        self.ctrl_principal.acessar_usuario_admin()
