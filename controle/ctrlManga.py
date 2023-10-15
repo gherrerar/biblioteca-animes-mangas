@@ -64,7 +64,7 @@ class CtrlManga(AbstractCtrl):
                 dados_manga['num_volumes']
             )
             self.__mangas.append(manga)
-            self.__tela_manga.mostra_mensagem("Manga cadastrado!")
+            self.__tela_manga.mostra_mensagem("Manga cadastrado!\n")
 
     def editar_manga(self):
         def inner(manga):
@@ -127,7 +127,7 @@ class CtrlManga(AbstractCtrl):
                         dados_capitulos = self.__tela_manga.recolhe_dados_capitulo(volume.num_capitulos)
                         capitulo = volume.find_capitulo_by_numero(dados_capitulos['numero'])
                         if capitulo != None:
-                            self.__tela_manga("Atencao! Este capitulo ja existe!\n")
+                            self.__tela_manga.mostra_mensagem("Atencao! Este capitulo ja existe!\n")
                         else:
                             manga.add_capitulo_volume(
                                 volume.numero,

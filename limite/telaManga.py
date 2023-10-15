@@ -86,7 +86,7 @@ class TelaManga(AbstractTela):
         return numero
 
     def recolhe_dados_capitulo(self, n_caps: int) -> dict:
-        print(f"{'DADOS CAPITULO':-^}")
+        print(f"{'DADOS CAPITULO':-^30}")
         numero = super().le_num_inteiro("Numero: ", minimo=1, maximo=n_caps)
         num_paginas = super().le_num_inteiro("Numero de Paginas: ", minimo=10)
 
