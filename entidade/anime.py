@@ -8,17 +8,13 @@ class Anime(Obra):
                  titulo: str,
                  ano: int,
                  genero: Genero,
-                 num_temporadas: int,
-                 numero_temp: int,
-                 num_episodios_temp: int):
+                 num_temporadas: int):
         super().__init__(titulo, ano, genero)
         self.__estudio = None
         self.__num_temporadas = None
         self.__temporadas = []
         if isinstance(num_temporadas, int):
             self.__num_temporadas = num_temporadas
-        if isinstance(numero_temp, int) and isinstance(num_episodios_temp, int):
-            self.__temporadas.append(Temporada(numero_temp, num_episodios_temp))
 
     @property
     def estudio(self):

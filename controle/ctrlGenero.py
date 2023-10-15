@@ -1,12 +1,13 @@
+from controle.abstractCtrl import AbstractCtrl
 from entidade.genero import Genero
 from limite.telaGenero import TelaGenero
 
 
-class CtrlGenero:
+class CtrlGenero(AbstractCtrl):
     def __init__(self, ctrl_principal):
         self.__generos = []
         self.__tela_genero = TelaGenero()
-        self.__ctrl_principal = ctrl_principal
+        super().__init__(ctrl_principal)
 
     @property
     def generos(self):
@@ -41,6 +42,3 @@ class CtrlGenero:
                 if gen.nome == nome:
                     return gen
             return None
-
-    def retornar(self):
-        pass
