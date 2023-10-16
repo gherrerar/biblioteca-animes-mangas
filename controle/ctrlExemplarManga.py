@@ -45,6 +45,11 @@ class CtrlExemplarManga(AbstractCtrl):
             return exemplar
         self.__existe_manga(inner)
 
+    def editar_etiqueta_exemplar(self, exemplar, etiqueta: str):
+        for eti in Estado:
+            self.__tela_exemplar_manga.mostra_etiqueta_estado(eti.value)
+        exemplar.etiqueta = Estado(etiqueta)
+
     def __existe_manga(self, func):
         ctrl_manga = self.ctrl_principal.ctrl_manga
         while True:

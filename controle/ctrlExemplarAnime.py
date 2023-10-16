@@ -45,6 +45,11 @@ class CtrlExemplarAnime(AbstractCtrl):
             return exemplar
         self.__existe_anime(inner)
 
+    def editar_etiqueta_exemplar(self, exemplar, etiqueta: str):
+        for eti in Estado:
+            self.__tela_exemplar_anime.mostra_etiqueta_estado(eti.value)
+        exemplar.etiqueta = Estado(etiqueta)
+
     def __existe_anime(self, func):
         ctrl_anime = self.ctrl_principal.ctrl_anime
         while True:

@@ -22,6 +22,10 @@ class TelaExemplarManga(AbstractTela):
             print(f"{'ESTADO:':<15} {dados_exemplar['etiqueta'].value}")
             print()
 
+    def mostra_etiqueta_estado(self, valor_etiqueta: str):
+        print(valor_etiqueta)
+        print()
+
     def recolhe_dados_exemplar(self) -> str:
         print(f"{'DADOS EXEMPLAR':-^30}")
         manga = super().le_texto("Título: ")
