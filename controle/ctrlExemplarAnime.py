@@ -30,7 +30,7 @@ class CtrlExemplarAnime(AbstractCtrl):
         else:
             self.__tela_exemplar_anime.mostra_exemplar(None)
 
-    def incluir_exemplar(self):
+    def incluir_exemplar(self, out_anime = None):
         def inner(anime):
             exemplar = self.find_exemplar_by_anime(anime.titulo)
             if exemplar != None:
@@ -39,6 +39,10 @@ class CtrlExemplarAnime(AbstractCtrl):
                 exemplar = ExemplarAnime(anime, Estado.NAO_INICIADO)
                 self.__exemplares_anime.append(exemplar)
                 self.__tela_exemplar_anime.mostra_mensagem("Exemplar cadastrado!\n")
+        if out_anime:
+            exemplar = ExemplarAnime(out_anime, Estado.EM_ANDAMENTO)
+            self.__exemplares_anime.append(exemplar)
+            return exemplar
         self.__existe_anime(inner)
 
     def __existe_anime(self, func):

@@ -30,7 +30,7 @@ class CtrlExemplarManga(AbstractCtrl):
         else:
             self.__tela_exemplar_manga.mostra_exemplar(None)
 
-    def incluir_exemplar(self):
+    def incluir_exemplar(self, out_manga = None):
         def inner(manga):
             exemplar = self.find_exemplar_by_manga(manga.titulo)
             if exemplar != None:
@@ -39,6 +39,10 @@ class CtrlExemplarManga(AbstractCtrl):
                 exemplar = ExemplarManga(manga, Estado.NAO_INICIADO)
                 self.__exemplares_manga.append(exemplar)
                 self.__tela_exemplar_manga.mostra_mensagem("Exemplar cadastrado!\n")
+        if out_manga:
+            exemplar = ExemplarManga(out_manga, Estado.EM_ANDAMENTO)
+            self.__exemplares_manga.append(exemplar)
+            return exemplar
         self.__existe_manga(inner)
 
     def __existe_manga(self, func):
