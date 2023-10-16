@@ -15,7 +15,7 @@ class CtrlManga(AbstractCtrl):
             2: self.incluir_manga,
             3: self.editar_manga,
             4: self.remover_manga,
-            5: self.abrir_tela_temporada,
+            5: self.abrir_tela_volume,
             6: self.abrir_tela_autor,
             0: self.retornar
         }
@@ -23,7 +23,7 @@ class CtrlManga(AbstractCtrl):
         while True:
             opcoes[self.__tela_manga.mostra_opcoes()]()
 
-    def abrir_tela_temporada(self):
+    def abrir_tela_volume(self):
         opcoes = {
             1: self.listar_volumes_manga,
             2: self.incluir_volume_manga,
