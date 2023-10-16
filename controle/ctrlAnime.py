@@ -16,6 +16,7 @@ class CtrlAnime(AbstractCtrl):
             3: self.editar_anime,
             4: self.remover_anime,
             5: self.abrir_tela_temporada,
+            6: self.abrir_tela_estudio,
             0: self.retornar
         }
 
@@ -34,6 +35,9 @@ class CtrlAnime(AbstractCtrl):
 
         while True:
             opcoes[self.__tela_anime.mostra_opcoes_temporada()]()
+
+    def abrir_tela_estudio(self):
+        self.ctrl_principal.ctrl_estudio.abrir_tela()
 
     def listar_animes(self):
         if self.__animes:

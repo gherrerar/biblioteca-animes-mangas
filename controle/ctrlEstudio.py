@@ -75,3 +75,6 @@ class CtrlEstudio(AbstractCtrl):
                 if estudio.nome == nome:
                     return estudio
             return None
+
+    def retornar(self):
+        self.ctrl_principal.ctrl_anime.abrir_tela()

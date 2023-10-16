@@ -76,3 +76,5 @@ class CtrlAutor(AbstractCtrl):
                     return autor
             return None
 
+    def retornar(self):
+        self.ctrl_principal.ctrl_manga.abrir_tela()

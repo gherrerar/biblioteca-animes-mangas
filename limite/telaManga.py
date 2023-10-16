@@ -12,9 +12,10 @@ class TelaManga(AbstractTela):
         print("3 - Editar")
         print("4 - Remover")
         print("5 - Volumes")
+        print("6 - Autores")
         print("0 - Voltar")
         
-        opcao = super().le_num_inteiro("Escolha uma opcao: ", range(6))
+        opcao = super().le_num_inteiro("Escolha uma opcao: ", range(7))
         return opcao
     
     def mostra_opcoes_volume(self) -> int:
