@@ -46,11 +46,10 @@ class CtrlExemplarManga(AbstractCtrl):
         self.__existe_manga(inner)
 
     def editar_etiqueta_exemplar(self, exemplar):
-        for eti in Estado:
-            self.__tela_exemplar_manga.mostra_etiqueta_estado(eti.value)
+        self.__tela_exemplar_manga.mostra_etiqueta_estado(Estado)
         valor_etiqueta = self.__tela_exemplar_manga.recolhe_dados_etiqueta()
-        etiqueta = Estado(valor_etiqueta)
-        if etiqueta in Estado:
+        etiqueta = self.find_etiqueta_by_estado(valor_etiqueta)
+        if etiqueta != None:
             exemplar.etiqueta = etiqueta
             self.__tela_exemplar_manga.mostra_mensagem("Etiqueta alterada!\n")
         else:
@@ -74,4 +73,11 @@ class CtrlExemplarManga(AbstractCtrl):
             for exemplar in self.__exemplares_manga:
                 if exemplar.manga.titulo == titulo_manga:
                     return exemplar
+            return None
+
+    def find_etiqueta_by_estado(self, valor_etiqueta: str) -> Estado | None:
+        if isinstance(valor_etiqueta, str):
+            for estado in Estado:
+                if estado.value == valor_etiqueta:
+                    return estado
             return None

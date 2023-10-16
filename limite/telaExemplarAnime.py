@@ -27,9 +27,10 @@ class TelaExemplarAnime(AbstractTela):
         anime = super().le_texto("Título: ")
         return anime
 
-    def mostra_etiqueta_estado(self, valor_etiqueta: str):
-        print(valor_etiqueta)
-        print()
+    def mostra_etiqueta_estado(self, etiqueta):
+        print(">> Valores de etiqueta:")
+        for estado in etiqueta:
+            print(f"• {estado.value}")
 
     def recolhe_dados_etiqueta(self) -> str:
         print(f"{'DADOS ETIQUETA':-^30}")
