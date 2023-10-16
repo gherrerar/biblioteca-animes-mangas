@@ -22,11 +22,16 @@ class TelaExemplarAnime(AbstractTela):
             print(f"{'ESTADO:':<15} {dados_exemplar['etiqueta'].value}")
             print()
 
-    def mostra_etiqueta_estado(self, valor_etiqueta: str):
-        print(valor_etiqueta)
-        print()
-
     def recolhe_dados_exemplar(self) -> str:
         print(f"{'DADOS EXEMPLAR':-^30}")
         anime = super().le_texto("Título: ")
         return anime
+
+    def mostra_etiqueta_estado(self, valor_etiqueta: str):
+        print(valor_etiqueta)
+        print()
+
+    def recolhe_dados_etiqueta(self) -> str:
+        print(f"{'DADOS ETIQUETA':-^30}")
+        valor_etiqueta = super().le_texto("Estado: ")
+        return valor_etiqueta
