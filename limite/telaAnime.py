@@ -71,7 +71,13 @@ class TelaAnime(AbstractTela):
             self.mostra_mensagem("Nenhuma temporada cadastrada neste anime")
         else:
             print(f"{'NUMERO:':<15} {dados_temporada['numero']}")
-            print(f"{'Nº EPISODIOS:':<15} {dados_temporada['num_episodios']}")
+            print(f"{'EPISODIOS:':<15} "
+                  "{}".format(
+                      str(len(dados_temporada['episodios']))
+                      +' / '
+                      +str(dados_temporada['num_episodios'])
+                  )
+                )
             print()
 
     def recolhe_dados_temporada(self, n_temps: int) -> dict:

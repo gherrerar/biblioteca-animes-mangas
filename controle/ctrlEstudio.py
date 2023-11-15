@@ -50,24 +50,24 @@ class CtrlEstudio(AbstractCtrl):
 
     def __existe_estudio(self):
         self.listar_estudios()
-        while True:
-            nome_estudio = self.__tela_estudio.seleciona_estudio()
-            estudio = self.find_estudio_by_nome(nome_estudio)
-            if estudio != None:
-                return estudio
-            else:
-                self.__tela_estudio.mostra_mensagem("Atencao! Este estudio nao existe!\n")
+        # while True:
+        nome_estudio = self.__tela_estudio.seleciona_estudio()
+        estudio = self.find_estudio_by_nome(nome_estudio)
+        if estudio != None:
+            return estudio
+        else:
+            self.__tela_estudio.mostra_mensagem("Atencao! Este estudio nao existe!\n")
 
     def __existe_anime(self):        
         ctrl_anime = self.ctrl_principal.ctrl_anime
         ctrl_anime.listar_animes()
-        while True:
-            titulo_anime = self.__tela_estudio.seleciona_anime()
-            anime = ctrl_anime.find_anime_by_titulo(titulo_anime)
-            if anime != None:
-                return anime
-            else:
-                self.__tela_estudio.mostra_mensagem("Atencao! Este anime nao existe!\n")
+        # while True:
+        titulo_anime = self.__tela_estudio.seleciona_anime()
+        anime = ctrl_anime.find_anime_by_titulo(titulo_anime)
+        if anime != None:
+            return anime
+        else:
+            self.__tela_estudio.mostra_mensagem("Atencao! Este anime nao existe!\n")
 
     def find_estudio_by_nome(self, nome: str) -> Estudio | None:
         if self.__estudios and isinstance(nome, str):

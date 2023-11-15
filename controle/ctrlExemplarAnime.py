@@ -31,7 +31,7 @@ class CtrlExemplarAnime(AbstractCtrl):
             self.__tela_exemplar_anime.mostra_exemplar(None)
 
     def incluir_exemplar(self, out_anime = None):
-        def inner(anime):
+        def logica_inclusao(anime):
             exemplar = self.find_exemplar_by_anime(anime.titulo)
             if exemplar != None:
                 self.__tela_exemplar_anime.mostra_mensagem("Atenção! Este exemplar de anime já existe")
@@ -43,7 +43,7 @@ class CtrlExemplarAnime(AbstractCtrl):
             exemplar = ExemplarAnime(out_anime, Estado.EM_ANDAMENTO)
             self.__exemplares_anime.append(exemplar)
             return exemplar
-        self.__existe_anime(inner)
+        self.__executa_se_existe_anime(logica_inclusao)
 
     def editar_etiqueta_exemplar(self, exemplar):
         self.__tela_exemplar_anime.mostra_etiqueta_estado(Estado)
@@ -57,16 +57,16 @@ class CtrlExemplarAnime(AbstractCtrl):
                 "Atenção! Este não é um valor válido para a etiqueta"
             )
 
-    def __existe_anime(self, func):
+    def __executa_se_existe_anime(self, func):
         ctrl_anime = self.ctrl_principal.ctrl_anime
-        while True:
-            titulo_anime = self.__tela_exemplar_anime.recolhe_dados_exemplar()
-            anime = ctrl_anime.find_anime_by_titulo(titulo_anime)
-            if anime != None:
-                func(anime)
-                break
-            else:
-                self.__tela_exemplar_anime.mostra_mensagem("Atenção! Este anime não existe")
+        # while True:
+        titulo_anime = self.__tela_exemplar_anime.recolhe_dados_exemplar()
+        anime = ctrl_anime.find_anime_by_titulo(titulo_anime)
+        if anime != None:
+            func(anime)
+            # break
+        else:
+            self.__tela_exemplar_anime.mostra_mensagem("Atenção! Este anime não existe")
 
     def find_exemplar_by_anime(self, titulo_anime: str) -> ExemplarAnime | None:
         if self.__exemplares_anime and isinstance(titulo_anime, str):
