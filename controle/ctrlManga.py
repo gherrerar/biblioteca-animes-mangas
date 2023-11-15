@@ -56,7 +56,7 @@ class CtrlManga(AbstractCtrl):
     def incluir_manga(self):
         self.ctrl_principal.ctrl_genero.listar_generos()
         dados_manga = self.__tela_manga.recolhe_dados_manga()
-        self.__existe_genero(dados_manga)
+        self.__cria_genero(dados_manga)
 
         if self.find_manga_by_titulo(dados_manga['titulo']) != None:
             self.__tela_manga.mostra_mensagem("Atencao! Esse manga ja existe!\n")
@@ -71,37 +71,38 @@ class CtrlManga(AbstractCtrl):
             self.__tela_manga.mostra_mensagem("Manga cadastrado!\n")
 
     def editar_manga(self):
-        def inner(manga):
+        def logica_edicao(manga):
             dados_manga = self.__tela_manga.recolhe_dados_manga()
-            self.__existe_genero(dados_manga)
+            self.__cria_genero(dados_manga)
 
             manga.titulo = dados_manga['titulo']
             manga.ano_lancamento = dados_manga['ano']
             manga.genero = dados_manga['genero']
             manga.num_volumes = dados_manga['num_volumes']
             self.__tela_manga.mostra_mensagem("Manga alterado!\n")
-        self.__existe_manga(inner)
+        self.__executa_se_existe_manga(logica_edicao)
 
     def remover_manga(self):
-        def inner(manga):
+        def logica_remocao(manga):
             self.__mangas.remove(manga)
             self.__tela_manga.mostra_mensagem("Manga removido!\n")
-        self.__existe_manga(inner)
+        self.__executa_se_existe_manga(logica_remocao)
 
     def listar_volumes_manga(self):
-        def inner(manga):
+        def logica_lista_volume(manga):
             if manga.volumes:
                 for vol in manga.volumes:
                     self.__tela_manga.mostra_volume({
                         'numero': vol.numero,
-                        'num_capitulos': vol.num_capitulos
+                        'num_capitulos': vol.num_capitulos,
+                        'capitulos': vol.capitulos
                     })
             else:
                 self.__tela_manga.mostra_volume({})
-        self.__existe_manga(inner)
+        self.__executa_se_existe_manga(logica_lista_volume)
 
     def incluir_volume_manga(self):
-        def inner(manga):
+        def logica_inclusao_volume(manga):
             while True:
                 dados_volume = self.__tela_manga.recolhe_dados_volume(manga.num_volumes)
                 volume = manga.add_volume(
@@ -113,19 +114,19 @@ class CtrlManga(AbstractCtrl):
                     break
                 else:
                     self.__tela_manga.mostra_mensagem("Atencao! Este volume ja existe!\n")
-        self.__existe_manga(inner)
+        self.__executa_se_existe_manga(logica_inclusao_volume)
 
     def remover_volume_manga(self):
-        def inner(manga):
-            def inner_inner(volume):
+        def seleciona_manga(manga):
+            def logica_remocao_volume(volume):
                 manga.rem_volume(volume.numero)
                 self.__tela_manga.mostra_mensagem("Volume removido!\n")
-            self.__existe_volume_manga(manga, inner_inner)
-        self.__existe_manga(inner)
+            self.__executa_se_existe_volume_manga(manga, logica_remocao_volume)
+        self.__executa_se_existe_manga(seleciona_manga)
 
     def incluir_capitulos_volume(self):
-        def inner(manga):
-            def inner_inner(volume):
+        def seleciona_manga(manga):
+            def logica_inclusao_capitulos(volume):
                 for _ in range(abs(len(volume.capitulos)-volume.num_capitulos)):
                     while True:
                         dados_capitulos = self.__tela_manga.recolhe_dados_capitulo(volume.num_capitulos)
@@ -140,53 +141,58 @@ class CtrlManga(AbstractCtrl):
                             )
                             self.__tela_manga.mostra_mensagem("Capitulo inserido!\n")
                             break
-            self.__existe_volume_manga(manga, inner_inner)
-        self.__existe_manga(inner)
+            self.__executa_se_existe_volume_manga(manga, logica_inclusao_capitulos)
+        self.__executa_se_existe_manga(seleciona_manga)
 
     def remover_capitulo_volume(self):
-        def inner(manga):
-            def inner_inner(volume):
-                while True:
-                    numero_cap = self.__tela_manga.seleciona_capitulo(volume.num_capitulos)
-                    capitulo = volume.find_capitulo_by_numero(numero_cap)
-                    if capitulo != None:
-                        manga.rem_capitulo_volume(
-                            volume.numero,
-                            numero_cap
-                        )
-                        self.__tela_manga.mostra_mensagem("Capitulo removido!\n")
-                        break
-                    else:
-                        self.__tela_manga.mostra_mensagem("Atencao! Este capitulo nao existe!\n")
-            self.__existe_volume_manga(manga, inner_inner)
-        self.__existe_manga(inner)
+        def seleciona_manga(manga):
+            def logica_remocao_capitulo(volume):
+                if volume.capitulos:
+                    while True:
+                        numero_cap = self.__tela_manga.seleciona_capitulo(volume.num_capitulos)
+                        capitulo = volume.find_capitulo_by_numero(numero_cap)
+                        if capitulo != None:
+                            manga.rem_capitulo_volume(
+                                volume.numero,
+                                numero_cap
+                            )
+                            self.__tela_manga.mostra_mensagem("Capitulo removido!\n")
+                            break
+                        else:
+                            self.__tela_manga.mostra_mensagem("Atencao! Este capitulo nao existe!\n")
+                else:
+                    self.__tela_manga.mostra_mensagem("Nenhum capitulo foi cadastrado neste volume\n")
+            self.__executa_se_existe_volume_manga(manga, logica_remocao_capitulo)
+        self.__executa_se_existe_manga(seleciona_manga)
 
-    def __existe_genero(self, dados_manga: {}):
+    def __cria_genero(self, dados_manga: {}):
         ctrl_genero = self.ctrl_principal.ctrl_genero
         nome_genero = dados_manga['genero']
         ctrl_genero.incluir_genero(nome_genero)
         dados_manga['genero'] = ctrl_genero.find_genero_by_nome(nome_genero)
 
-    def __existe_manga(self, func):
+    def __executa_se_existe_manga(self, func_crud):
         self.listar_mangas()
-        while True:
-            titulo = self.__tela_manga.seleciona_manga()
-            manga = self.find_manga_by_titulo(titulo)
-            if manga != None:
-                func(manga)
-                break
-            else:
-                self.__tela_manga.mostra_mensagem("Atencao! Este manga nao existe!\n")
+        if self.__mangas:
+            while True:
+                titulo = self.__tela_manga.seleciona_manga()
+                manga = self.find_manga_by_titulo(titulo)
+                if manga != None:
+                    func_crud(manga)
+                    break
+                else:
+                    self.__tela_manga.mostra_mensagem("Atencao! Este manga nao existe!\n")
 
-    def __existe_volume_manga(self, manga, func):
-        while True:
+    def __executa_se_existe_volume_manga(self, manga, func_crud):
+        if manga.volumes:
             numero_vol = self.__tela_manga.seleciona_volume(manga.num_volumes)
             volume = manga.find_volume_by_numero(numero_vol)
             if volume != None:
-                func(volume)
-                break
+                func_crud(volume)
             else:
                 self.__tela_manga.mostra_mensagem("Atenção! Este volume não existe!\n")
+        else:
+            self.__tela_manga.mostra_mensagem("Nenhum volume foi cadastrado neste manga\n")
 
     def find_manga_by_titulo(self, titulo: str = '') -> Manga | None:
         if self.__mangas and isinstance(titulo, str):

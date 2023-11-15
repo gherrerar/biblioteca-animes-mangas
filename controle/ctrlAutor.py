@@ -40,13 +40,17 @@ class CtrlAutor(AbstractCtrl):
             self.__tela_autor.mostra_mensagem("Autor cadastrado!")
 
     def incluir_manga(self):
-        autor = self.__existe_autor()
-        manga = self.__existe_manga()
-        if manga in autor.mangas_produzidos:
-            self.__tela_autor.mostra_mensagem("Atencao! Este autor e manga ja estao associados!")
-        else:
-            autor.add_manga(manga)
-            self.__tela_autor.mostra_mensagem("Autor e manga associados!")
+        if self.__autores:
+            autor = self.__existe_autor()
+            manga = self.__existe_manga()
+            if manga != None and autor != None:
+                if manga in autor.mangas_produzidos:
+                    self.__tela_autor.mostra_mensagem("Atencao! Este autor e manga ja estao associados!")
+                else:
+                    autor.add_manga(manga)
+                    self.__tela_autor.mostra_mensagem("Autor e manga associados!")
+            else:
+                self.__tela_autor.mostra_mensagem("Nenhum autor foi cadastrado!")
 
     def __existe_autor(self):
         self.listar_autores()
@@ -61,13 +65,13 @@ class CtrlAutor(AbstractCtrl):
     def __existe_manga(self):        
         ctrl_manga = self.ctrl_principal.ctrl_manga
         ctrl_manga.listar_mangas()
-        while True:
-            titulo_manga = self.__tela_autor.seleciona_manga()
-            manga = ctrl_manga.find_manga_by_titulo(titulo_manga)
-            if manga != None:
-                return manga
-            else:
-                self.__tela_autor.mostra_mensagem("Atencao! Este manga nao existe!\n")
+        titulo_manga = self.__tela_autor.seleciona_manga()
+        manga = ctrl_manga.find_manga_by_titulo(titulo_manga)
+        if manga != None:
+            return manga
+        else:
+            self.__tela_autor.mostra_mensagem("Atencao! Este manga nao existe!\n")
+            self.abrir_tela()
 
     def find_autor_by_nome(self, nome: str) -> Autor | None:
         if self.__autores and isinstance(nome, str):

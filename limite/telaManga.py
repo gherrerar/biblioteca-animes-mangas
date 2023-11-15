@@ -71,7 +71,13 @@ class TelaManga(AbstractTela):
             self.mostra_mensagem("Nenhum volume cadastrado neste manga")
         else:
             print(f"{'NUMERO:':<15} {dados_volume['numero']}")
-            print(f"{'Nº CAPITULOS:':<15} {dados_volume['num_capitulos']}")
+            print(f"{'CAPITULOS:':<15} "
+                  "{}".format(
+                      str(len(dados_volume['capitulos']))
+                      +' / '
+                      +str(dados_volume['num_capitulos'])
+                  )
+                )
             print()
 
     def recolhe_dados_volume(self, n_vols: int) -> dict:

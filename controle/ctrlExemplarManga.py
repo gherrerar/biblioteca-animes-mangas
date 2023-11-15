@@ -31,7 +31,7 @@ class CtrlExemplarManga(AbstractCtrl):
             self.__tela_exemplar_manga.mostra_exemplar(None)
 
     def incluir_exemplar(self, out_manga = None):
-        def inner(manga):
+        def logica_inclusao(manga):
             exemplar = self.find_exemplar_by_manga(manga.titulo)
             if exemplar != None:
                 self.__tela_exemplar_manga.mostra_mensagem("Atencao! Este exmplar de manga ja existe!")
@@ -43,7 +43,7 @@ class CtrlExemplarManga(AbstractCtrl):
             exemplar = ExemplarManga(out_manga, Estado.EM_ANDAMENTO)
             self.__exemplares_manga.append(exemplar)
             return exemplar
-        self.__existe_manga(inner)
+        self.__executa_se_existe_manga(logica_inclusao)
 
     def editar_etiqueta_exemplar(self, exemplar):
         self.__tela_exemplar_manga.mostra_etiqueta_estado(Estado)
@@ -57,16 +57,14 @@ class CtrlExemplarManga(AbstractCtrl):
                 "Atenção! Este não é um valor válido para a etiqueta"
             )
 
-    def __existe_manga(self, func):
+    def __executa_se_existe_manga(self, func):
         ctrl_manga = self.ctrl_principal.ctrl_manga
-        while True:
-            titulo_manga = self.__tela_exemplar_manga.recolhe_dados_exemplar()
-            manga = ctrl_manga.find_manga_by_titulo(titulo_manga)
-            if manga != None:
-                func(manga)
-                break
-            else:
-                self.__tela_exemplar_manga.mostra_mensagem("Atencao! Este manga nao existe!")
+        titulo_manga = self.__tela_exemplar_manga.recolhe_dados_exemplar()
+        manga = ctrl_manga.find_manga_by_titulo(titulo_manga)
+        if manga != None:
+            func(manga)
+        else:
+            self.__tela_exemplar_manga.mostra_mensagem("Atencao! Este manga nao existe!")
 
     def find_exemplar_by_manga(self, titulo_manga: str) -> ExemplarManga | None:
         if self.__exemplares_manga and isinstance(titulo_manga, str):
