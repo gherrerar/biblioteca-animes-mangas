@@ -182,18 +182,17 @@ class CtrlAnime(AbstractCtrl):
                     break
                 else:
                     self.__tela_anime.mostra_mensagem("Atenção! Este anime não existe\n")
-        else:
-            self.__tela_anime.mostra_mensagem("Nenhum anime foi cadastrado\n")
 
     def __executa_se_existe_temporada_anime(self, anime, func_crud):
-        # while True:
+        if anime.temporadas:
             numero_temp = self.__tela_anime.seleciona_temporada(anime.num_temporadas)
             temporada = anime.find_temporada_by_numero(numero_temp)
             if temporada != None:
                 func_crud(temporada)
-                # break
             else:
                 self.__tela_anime.mostra_mensagem("Atenção! Esta temporada não existe\n")
+        else:
+            self.__tela_anime.mostra_mensagem("Nenhuma temporada foi cadastrada neste anime\n")
 
     def find_anime_by_titulo(self, titulo: str) -> Anime | None:
         if self.__animes and isinstance(titulo, str):

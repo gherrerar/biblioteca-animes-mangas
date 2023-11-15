@@ -40,34 +40,38 @@ class CtrlEstudio(AbstractCtrl):
             self.__tela_estudio.mostra_mensagem("Estudio cadastrado!")
 
     def incluir_anime(self):
-        estudio = self.__existe_estudio()
-        anime = self.__existe_anime()
-        if anime in estudio.animes_produzidos:
-            self.__tela_estudio.mostra_mensagem("Atencao! Este estudio e anime ja estao associados!")
+        if self.__estudios:
+            estudio = self.__existe_estudio()
+            anime = self.__existe_anime()
+            if anime != None and estudio != None:
+                if anime in estudio.animes_produzidos:
+                    self.__tela_estudio.mostra_mensagem("Atencao! Este estudio e anime ja estao associados!")
+                else:
+                    estudio.add_anime(anime)
+                    self.__tela_estudio.mostra_mensagem("Estudio e anime associados!")
         else:
-            estudio.add_anime(anime)
-            self.__tela_estudio.mostra_mensagem("Estudio e anime associados!")
+            self.__tela_estudio.mostra_mensagem("Nenhum estudio foi cadastrado!")
 
     def __existe_estudio(self):
         self.listar_estudios()
-        # while True:
         nome_estudio = self.__tela_estudio.seleciona_estudio()
         estudio = self.find_estudio_by_nome(nome_estudio)
         if estudio != None:
             return estudio
         else:
             self.__tela_estudio.mostra_mensagem("Atencao! Este estudio nao existe!\n")
+            self.abrir_tela()
 
-    def __existe_anime(self):        
+    def __existe_anime(self):
         ctrl_anime = self.ctrl_principal.ctrl_anime
         ctrl_anime.listar_animes()
-        # while True:
         titulo_anime = self.__tela_estudio.seleciona_anime()
         anime = ctrl_anime.find_anime_by_titulo(titulo_anime)
         if anime != None:
             return anime
         else:
             self.__tela_estudio.mostra_mensagem("Atencao! Este anime nao existe!\n")
+            self.abrir_tela()
 
     def find_estudio_by_nome(self, nome: str) -> Estudio | None:
         if self.__estudios and isinstance(nome, str):
