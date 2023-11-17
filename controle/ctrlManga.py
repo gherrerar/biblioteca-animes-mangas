@@ -39,6 +39,10 @@ class CtrlManga(AbstractCtrl):
     def abrir_tela_autor(self):
         self.ctrl_principal.ctrl_autor.abrir_tela()
 
+    @property
+    def tela_manga(self):
+        return self.__tela_manga
+
     def listar_mangas(self):
         if self.__mangas:
             for manga in self.__mangas:

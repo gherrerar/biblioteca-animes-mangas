@@ -39,6 +39,10 @@ class CtrlAnime(AbstractCtrl):
     def abrir_tela_estudio(self):
         self.ctrl_principal.ctrl_estudio.abrir_tela()
 
+    @property
+    def tela_anime(self):
+        return self.__tela_anime
+
     def listar_animes(self):
         if self.__animes:
             for ani in self.__animes:

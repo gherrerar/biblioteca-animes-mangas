@@ -71,14 +71,14 @@ class CtrlUsuarioComum(AbstractCtrl):
         usuario = self.__existe_usuario()
         if usuario.animes:
             for exemplar in usuario.animes:
-                self.__tela_usuario_comum.mostra_anime({
+                self.__tela_usuario_comum.mostra_etiqueta(exemplar.etiqueta.value)
+                self.ctrl_principal.ctrl_anime.tela_anime.mostra_anime({
                     'titulo': exemplar.anime.titulo,
                     'ano': exemplar.anime.ano_lancamento,
                     'genero': exemplar.anime.genero,
                     'estudio': exemplar.anime.estudio,
                     'num_temporadas': exemplar.anime.num_temporadas,
                     'temporadas': exemplar.anime.temporadas,
-                    'estado': exemplar.etiqueta.value
                 })
         else:
             self.__tela_usuario_comum.mostra_mensagem("Atencao! Nao existem animes vinculados a este usuario!")
@@ -98,7 +98,7 @@ class CtrlUsuarioComum(AbstractCtrl):
 
     def alterar_etiqueta_anime(self):
         def logica_alteracao(usuario, exemplar):
-            self.__tela_usuario_comum.mostra_etiqueta_estado(Estado)
+            self.__tela_usuario_comum.mostra_valores_etiqueta(Estado)
             valor_etiqueta = self.__tela_usuario_comum.recolhe_dados_etiqueta()
             etiqueta = self.find_etiqueta_by_estado(valor_etiqueta)
             if etiqueta != None:
@@ -118,14 +118,14 @@ class CtrlUsuarioComum(AbstractCtrl):
         ultimos_animes = usuario.ultimos_animes()
         if ultimos_animes:
             for exemplar in ultimos_animes:
-                self.__tela_usuario_comum.mostra_anime({
+                self.__tela_usuario_comum.mostra_etiqueta(exemplar.etiqueta.value)
+                self.ctrl_principal.ctrl_anime.tela_anime.mostra_anime({
                     'titulo': exemplar.anime.titulo,
                     'ano': exemplar.anime.ano_lancamento,
                     'genero': exemplar.anime.genero,
                     'estudio': exemplar.anime.estudio,
                     'num_temporadas': exemplar.anime.num_temporadas,
                     'temporadas': exemplar.anime.temporadas,
-                    'estado': exemplar.etiqueta.value
                 })
         else:
             self.__tela_usuario_comum.mostra_mensagem("Atencao! Nao existem animes vinculados a este usuario!")
@@ -152,14 +152,14 @@ class CtrlUsuarioComum(AbstractCtrl):
         usuario = self.__existe_usuario()
         if usuario.mangas:
             for exemplar in usuario.mangas:
-                self.__tela_usuario_comum.mostra_manga({
+                self.__tela_usuario_comum.mostra_etiqueta(exemplar.etiqueta.value)
+                self.ctrl_principal.ctrl_manga.tela_manga.mostra_manga({
                     'titulo': exemplar.manga.titulo,
                     'ano': exemplar.manga.ano_lancamento,
                     'genero': exemplar.manga.genero,
                     'autor': exemplar.manga.autor,
                     'num_volumes': exemplar.manga.num_volumes,
                     'volumes': exemplar.manga.volumes,
-                    'estado': exemplar.etiqueta.value
                 })
         else:
             self.__tela_usuario_comum.mostra_mensagem("Atencao! Nao existem mangas vinculados a este usuario!")
@@ -179,7 +179,7 @@ class CtrlUsuarioComum(AbstractCtrl):
 
     def alterar_etiqueta_manga(self):
         def logica_alteracao(usuario, exemplar):
-            self.__tela_usuario_comum.mostra_etiqueta_estado(Estado)
+            self.__tela_usuario_comum.mostra_valores_etiqueta(Estado)
             valor_etiqueta = self.__tela_usuario_comum.recolhe_dados_etiqueta()
             etiqueta = self.find_etiqueta_by_estado(valor_etiqueta)
             if etiqueta != None:
@@ -199,14 +199,14 @@ class CtrlUsuarioComum(AbstractCtrl):
         ultimos_mangas = usuario.ultimos_mangas()
         if ultimos_mangas:
             for exemplar in ultimos_mangas:
-                self.__tela_usuario_comum.mostra_manga({
+                self.__tela_usuario_comum.mostra_etiqueta(exemplar.etiqueta.value)
+                self.ctrl_principal.ctrl_manga.tela_manga.mostra_manga({
                     'titulo': exemplar.manga.titulo,
                     'ano': exemplar.manga.ano_lancamento,
                     'genero': exemplar.manga.genero,
                     'autor': exemplar.manga.autor,
                     'num_volumes': exemplar.manga.num_volumes,
                     'volumes': exemplar.manga.volumes,
-                    'estado': exemplar.etiqueta.value
                 })
         else:
             self.__tela_usuario_comum.mostra_mensagem("Atencao! Nao existem mangas vinculados a este usuario!")
@@ -242,7 +242,7 @@ class CtrlUsuarioComum(AbstractCtrl):
     def __existe_anime(self):
         ctrl_anime = self.ctrl_principal.ctrl_anime
         ctrl_anime.listar_animes()
-        titulo_anime = self.__tela_usuario_comum.seleciona_anime()
+        titulo_anime = ctrl_anime.tela_anime.seleciona_anime()
         anime = ctrl_anime.find_anime_by_titulo(titulo_anime)
         if anime != None:
             return anime
@@ -253,7 +253,7 @@ class CtrlUsuarioComum(AbstractCtrl):
     def __existe_manga(self):
         ctrl_manga = self.ctrl_principal.ctrl_manga
         ctrl_manga.listar_mangas()
-        titulo_manga = self.__tela_usuario_comum.seleciona_manga()
+        titulo_manga = ctrl_manga.tela_manga.seleciona_manga()
         manga = ctrl_manga.find_manga_by_titulo(titulo_manga)
         if manga != None:
             return manga

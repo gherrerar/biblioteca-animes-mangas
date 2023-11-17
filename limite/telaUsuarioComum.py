@@ -71,66 +71,13 @@ class TelaUsuarioComum(AbstractTela):
         nome = super().le_texto("Nome: ")
         return nome
 
-    def mostra_anime(self, dados_anime: {}):
-        if not dados_anime:
-            self.mostra_mensagem("Nenhum exemplar de anime foi cadastrado!")
-        else:
-            print(f"{'TITULO:':<15} {dados_anime['titulo']}")
-            print(f"{'ANO:':<15} {dados_anime['ano']}")
-            print(f"{'GENERO:':<15} {dados_anime['genero'].nome}")
-            print(f"{'ESTUDIO:':<15} "
-                  "{}".format(
-                      dados_anime['estudio'].nome
-                      if dados_anime['estudio']
-                      else 'Nenhum vinculado')
-                )
-            print(f"{'TEMPORADAS:':<15} "
-                  "{}".format(
-                      str(len(dados_anime['temporadas']))
-                      +' / '
-                      +str(dados_anime['num_temporadas'])
-                  )
-                )
-            print(f"{'ETIQUETA:':<15} {dados_anime['estado']}")
-            print()
+    def mostra_etiqueta(self, etiqueta: str):
+        print(f"{'ETIQUETA:':<15} {etiqueta}")
 
-    def mostra_manga(self, dados_manga: {}):
-        if not dados_manga:
-            self.mostra_mensagem("Nenhum exemplar de manga foi cadastrado!")
-        else:
-            print(f"{'TITULO:':<15} {dados_manga['titulo']}")
-            print(f"{'ANO:':<15} {dados_manga['ano']}")
-            print(f"{'GENERO:':<15} {dados_manga['genero'].nome}")
-            print(f"{'AUTOR:':<15} "
-                  "{}".format(
-                      dados_manga['autor'].nome
-                      if dados_manga['autor']
-                      else 'Nenhum vinculado')
-                )
-            print(f"{'TEMPORADAS:':<15} "
-                  "{}".format(
-                      str(len(dados_manga['volumes']))
-                      +' / '
-                      +str(dados_manga['num_volumes'])
-                  )
-                )
-            print(f"{'ETIQUETA:':<15} {dados_manga['estado']}")
-            print()
-
-    def mostra_etiqueta_estado(self, etiqueta):
+    def mostra_valores_etiqueta(self, etiqueta):
         print(">> Valores de etiqueta:")
         for estado in etiqueta:
             print(f"• {estado.value}")
-
-    def seleciona_anime(self) -> str:
-        print(f"{'SELECIONAR ANIME':-^30}")
-        titulo = super().le_texto("Titulo: ")
-        return titulo
-
-    def seleciona_manga(self) -> str:
-        print(f"{'SELECIONAR MANGA':-^30}")
-        titulo = super().le_texto("Titulo: ")
-        return titulo
 
     def mostra_total_consumo(self, obra: str, consumo: str):
         if obra == 'anime':
