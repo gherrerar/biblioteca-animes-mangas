@@ -1,6 +1,9 @@
 from controle.abstractCtrl import AbstractCtrl
 from limite.telaUsuarioComum import TelaUsuarioComum
 from entidade.usuarioComum import UsuarioComum
+from entidade.exemplarAnime import ExemplarAnime
+from entidade.exemplarManga import ExemplarManga
+from entidade.exemplar import Estado
 
 
 class CtrlUsuarioComum(AbstractCtrl):
@@ -81,27 +84,31 @@ class CtrlUsuarioComum(AbstractCtrl):
             self.__tela_usuario_comum.mostra_mensagem("Atencao! Nao existem animes vinculados a este usuario!")
 
     def incluir_anime(self):
-        def inner(exemplar, usuario, ctrl):
-            self.__tela_usuario_comum.mostra_mensagem("Atencao! Este anime ja esta vinculado a este usuario!")
-
-        def alter_inner(exemplar, usuario, ctrl, anime):
-            if exemplar == None:
-                ctrl.incluir_exemplar(anime)
-                exemplar = ctrl.find_exemplar_by_anime(anime.titulo)
+        def logica_criacao(usuario, anime):
+            exemplar = ExemplarAnime(anime, Estado.EM_ANDAMENTO)
             usuario.add_anime(exemplar)
-            self.__tela_usuario_comum.mostra_mensagem("Anime vinculado a este usuario!")
-        self.__existe_exemplar_anime(inner, alter_inner)
+            self.__tela_usuario_comum.mostra_mensagem("Anime vinculado a este usuario!\n")
+        self.__executa_se_existe_exemplar_anime(logica_criacao, True)
 
     def remover_anime(self):
-        def inner(exemplar, usuario, ctrl):
+        def logica_remocao(usuario, exemplar):
             usuario.rem_anime(exemplar)
             self.__tela_usuario_comum.mostra_mensagem("Anime removido deste usuario!")
-        self.__existe_exemplar_anime(inner)
+        self.__executa_se_existe_exemplar_anime(logica_remocao)
 
     def alterar_etiqueta_anime(self):
-        def inner(exemplar, usuario, ctrl):
-            ctrl.editar_etiqueta_exemplar(exemplar)
-        self.__existe_exemplar_anime(inner)
+        def logica_alteracao(usuario, exemplar):
+            self.__tela_usuario_comum.mostra_etiqueta_estado(Estado)
+            valor_etiqueta = self.__tela_usuario_comum.recolhe_dados_etiqueta()
+            etiqueta = self.find_etiqueta_by_estado(valor_etiqueta)
+            if etiqueta != None:
+                exemplar.etiqueta = etiqueta
+                self.__tela_usuario_comum.mostra_mensagem("Etiqueta alterada!\n")
+            else:
+                self.__tela_usuario_comum.mostra_mensagem(
+                    "Atenção! Este não é um valor válido para a etiqueta"
+                )
+        self.__executa_se_existe_exemplar_anime(logica_alteracao)
 
     def calcular_total_horas_assistidas(self):
         self.__calcular_total_consumo('anime', 'total_horas_assistidas')
@@ -158,27 +165,31 @@ class CtrlUsuarioComum(AbstractCtrl):
             self.__tela_usuario_comum.mostra_mensagem("Atencao! Nao existem mangas vinculados a este usuario!")
 
     def incluir_manga(self):
-        def inner(exemplar, usuario, ctrl):
-            self.__tela_usuario_comum.mostra_mensagem("Atencao! Este manga ja esta vinculado a este usuario!")
-
-        def alter_inner(exemplar, usuario, ctrl, manga):
-            if exemplar == None:
-                ctrl.incluir_exemplar(manga)
-                exemplar = ctrl.find_exemplar_by_manga(manga.titulo)
+        def logica_criacao(usuario, manga):
+            exemplar = ExemplarManga(manga, Estado.EM_ANDAMENTO)
             usuario.add_manga(exemplar)
-            self.__tela_usuario_comum.mostra_mensagem("manga vinculado a este usuario!")
-        self.__existe_exemplar_manga(inner, alter_inner)
+            self.__tela_usuario_comum.mostra_mensagem("Manga vinculado a este usuario!\n")
+        self.__executa_se_existe_exemplar_manga(logica_criacao, True)
 
     def remover_manga(self):
-        def inner(exemplar, usuario, ctrl):
+        def logica_remocao(usuario, exemplar):
             usuario.rem_manga(exemplar)
             self.__tela_usuario_comum.mostra_mensagem("Manga removido deste usuario!")
-        self.__existe_exemplar_manga(inner)
+        self.__executa_se_existe_exemplar_manga(logica_remocao)
 
     def alterar_etiqueta_manga(self):
-        def inner(exemplar, usuario, ctrl):
-            ctrl.editar_etiqueta_exemplar(exemplar)
-        self.__existe_exemplar_manga(inner)
+        def logica_alteracao(usuario, exemplar):
+            self.__tela_usuario_comum.mostra_etiqueta_estado(Estado)
+            valor_etiqueta = self.__tela_usuario_comum.recolhe_dados_etiqueta()
+            etiqueta = self.find_etiqueta_by_estado(valor_etiqueta)
+            if etiqueta != None:
+                exemplar.etiqueta = etiqueta
+                self.__tela_usuario_comum.mostra_mensagem("Etiqueta alterada!\n")
+            else:
+                self.__tela_usuario_comum.mostra_mensagem(
+                    "Atenção! Este não é um valor válido para a etiqueta"
+                )
+        self.__executa_se_existe_exemplar_manga(logica_alteracao)
 
     def calcular_total_paginas_lidas(self):
         self.__calcular_total_consumo('manga', 'total_paginas_lidas')
@@ -231,54 +242,81 @@ class CtrlUsuarioComum(AbstractCtrl):
     def __existe_anime(self):
         ctrl_anime = self.ctrl_principal.ctrl_anime
         ctrl_anime.listar_animes()
-        while True:
-            titulo_anime = self.__tela_usuario_comum.seleciona_anime()
-            anime = ctrl_anime.find_anime_by_titulo(titulo_anime)
-            if anime != None:
-                return anime
-            else:
-                self.__tela_usuario_comum.mostra_mensagem("Atencao! Este anime nao existe!\n")
+        titulo_anime = self.__tela_usuario_comum.seleciona_anime()
+        anime = ctrl_anime.find_anime_by_titulo(titulo_anime)
+        if anime != None:
+            return anime
+        else:
+            self.__tela_usuario_comum.mostra_mensagem("Atencao! Este anime nao existe!\n")
+            self.abrir_tela_animes()
 
     def __existe_manga(self):
         ctrl_manga = self.ctrl_principal.ctrl_manga
         ctrl_manga.listar_mangas()
-        while True:
-            titulo_manga = self.__tela_usuario_comum.seleciona_manga()
-            manga = ctrl_manga.find_manga_by_titulo(titulo_manga)
-            if manga != None:
-                return manga
-            else:
-                self.__tela_usuario_comum.mostra_mensagem("Atencao! Este manga nao existe!\n")
+        titulo_manga = self.__tela_usuario_comum.seleciona_manga()
+        manga = ctrl_manga.find_manga_by_titulo(titulo_manga)
+        if manga != None:
+            return manga
+        else:
+            self.__tela_usuario_comum.mostra_mensagem("Atencao! Este manga nao existe!\n")
+            self.abrir_tela_mangas()
 
-    def __existe_exemplar_anime(self, func, not_func = None):
+    def __executa_se_existe_exemplar_anime(self, func_crud, create_case = False):
         usuario = self.__existe_usuario()
         anime = self.__existe_anime()
-        ctrl_exemplar_anime = self.ctrl_principal.ctrl_exemplar_anime
-        exemplar = ctrl_exemplar_anime.find_exemplar_by_anime(anime.titulo)
-        if exemplar in usuario.animes:
-            func(exemplar, usuario, ctrl_exemplar_anime)
-        else:
-            if not not_func:
-                self.__tela_usuario_comum.mostra_mensagem("Atencao! Este anime nao esta vinculado a este usuario!")
+        if anime is not None and usuario is not None:
+            exemplar = self.find_exemplar_by_anime(anime.titulo, usuario)
+            if exemplar is not None:
+                if create_case:
+                    self.__tela_usuario_comum.mostra_mensagem("Atencao! Este anime ja esta vinculado a este usuario!")
+                else:
+                    func_crud(usuario, exemplar)
             else:
-                not_func(exemplar, usuario, ctrl_exemplar_anime, anime)
+                if not create_case:
+                    self.__tela_usuario_comum.mostra_mensagem("Atencao! Este anime nao esta vinculado a este usuario!")
+                else:
+                    func_crud(usuario, anime)
 
-    def __existe_exemplar_manga(self, func, not_func = None):
+    def __executa_se_existe_exemplar_manga(self, func_crud, create_case = False):
         usuario = self.__existe_usuario()
         manga = self.__existe_manga()
-        ctrl_exemplar_manga = self.ctrl_principal.ctrl_exemplar_manga
-        exemplar = ctrl_exemplar_manga.find_exemplar_by_manga(manga.titulo)
-        if exemplar in usuario.mangas:
-            func(exemplar, usuario, ctrl_exemplar_manga)
-        else:
-            if not not_func:
-                self.__tela_usuario_comum.mostra_mensagem("Atencao! Este manga nao esta vinculado a este usuario!")
+        if manga is not None and usuario is not None:
+            exemplar = self.find_exemplar_by_manga(manga.titulo, usuario)
+            if exemplar is not None:
+                if create_case:
+                    self.__tela_usuario_comum.mostra_mensagem("Atencao! Este manga ja esta vinculado a este usuario!")
+                else:
+                    func_crud(usuario, exemplar)
             else:
-                not_func(exemplar, usuario, ctrl_exemplar_manga, manga)
+                if not create_case:
+                    self.__tela_usuario_comum.mostra_mensagem("Atencao! Este manga nao esta vinculado a este usuario!")
+                else:
+                    func_crud(usuario, manga)
 
     def find_usuario_by_nome(self, nome: str) -> UsuarioComum | None:
         if self.__usuarios_comum and isinstance(nome, str):
             for usuario in self.__usuarios_comum:
                 if usuario.nome == nome:
                     return usuario
+            return None
+
+    def find_exemplar_by_anime(self, titulo_anime: str, usuario: UsuarioComum) -> ExemplarAnime | None:
+        if usuario.animes and isinstance(titulo_anime, str):
+            for exemplar in usuario.animes:
+                if exemplar.anime.titulo == titulo_anime:
+                    return exemplar
+            return None
+
+    def find_exemplar_by_manga(self, titulo_manga: str, usuario: UsuarioComum) -> ExemplarManga | None:
+        if usuario.mangas and isinstance(titulo_manga, str):
+            for exemplar in usuario.mangas:
+                if exemplar.manga.titulo == titulo_manga:
+                    return exemplar
+            return None
+
+    def find_etiqueta_by_estado(self, valor_etiqueta: str) -> Estado | None:
+        if isinstance(valor_etiqueta, str):
+            for estado in Estado:
+                if estado.value == valor_etiqueta:
+                    return estado
             return None

@@ -3,8 +3,6 @@ from controle.ctrlManga import CtrlManga
 from controle.ctrlGenero import CtrlGenero
 from controle.ctrlEstudio import CtrlEstudio
 from controle.ctrlAutor import CtrlAutor
-from controle.ctrlExemplarAnime import CtrlExemplarAnime
-from controle.ctrlExemplarManga import CtrlExemplarManga
 from controle.ctrlUsuarioAdministrador import CtrlUsuarioAdministrador
 from controle.ctrlUsuarioComum import CtrlUsuarioComum
 from limite.telaPrincipal import TelaPrincipal
@@ -17,8 +15,6 @@ class CtrlPrincipal:
         self.__ctrl_genero = CtrlGenero(self)
         self.__ctrl_estudio = CtrlEstudio(self)
         self.__ctrl_autor = CtrlAutor(self)
-        self.__ctrl_exemplar_anime = CtrlExemplarAnime(self)
-        self.__ctrl_exemplar_manga = CtrlExemplarManga(self)
         self.__ctrl_usuario_admin = CtrlUsuarioAdministrador(self)
         self.__ctrl_usuario_comum = CtrlUsuarioComum(self)
         self.__tela_principal = TelaPrincipal()
@@ -42,14 +38,6 @@ class CtrlPrincipal:
     @property
     def ctrl_autor(self):
         return self.__ctrl_autor
-
-    @property
-    def ctrl_exemplar_anime(self):
-        return self.__ctrl_exemplar_anime
-
-    @property
-    def ctrl_exemplar_manga(self):
-        return self.__ctrl_exemplar_manga
 
     def abrir_tela(self):
         opcoes = {

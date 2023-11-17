@@ -61,6 +61,11 @@ class TelaUsuarioComum(AbstractTela):
         
         return {'nome': nome, 'senha': senha}
 
+    def recolhe_dados_etiqueta(self) -> str:
+        print(f"{'DADOS ETIQUETA':-^30}")
+        valor_etiqueta = super().le_texto("Estado: ")
+        return valor_etiqueta
+
     def seleciona_usuario(self) -> str:
         print(f"{'SELECIONAR USUARIO':-^30}")
         nome = super().le_texto("Nome: ")
@@ -111,6 +116,11 @@ class TelaUsuarioComum(AbstractTela):
                 )
             print(f"{'ETIQUETA:':<15} {dados_manga['estado']}")
             print()
+
+    def mostra_etiqueta_estado(self, etiqueta):
+        print(">> Valores de etiqueta:")
+        for estado in etiqueta:
+            print(f"• {estado.value}")
 
     def seleciona_anime(self) -> str:
         print(f"{'SELECIONAR ANIME':-^30}")
