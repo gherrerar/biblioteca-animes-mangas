@@ -5,16 +5,19 @@ class TelaUsuarioAdministrador(AbstractTela):
     def __init__(self):
         pass
 
-    def mostra_opcoes(self, usuarios_admin: []) -> int:
+    def mostra_opcoes(self, usuario_logado) -> int:
         print(f"{'USUARIOS ADMIN':-^30}")
         print("1 - Listar")
         print("2 - Cadastrar")
-        if usuarios_admin:
-            print("3 - Animes")
-            print("4 - Mangás")
+        print("3 - Login")
+        if usuario_logado:
+            print("4 - Logout")
+            print("5 - Animes")
+            print("6 - Mangás")
         print("0 - Voltar")
 
-        opcao = super().le_num_inteiro("Escolha uma opcao: ", range(5 if usuarios_admin else 3))
+        opcao = super().le_num_inteiro("Escolha uma opcao: ",
+                                       range(7 if usuario_logado else 5))
         return opcao
 
     def mostra_usuario(self, nome_usuario: str):

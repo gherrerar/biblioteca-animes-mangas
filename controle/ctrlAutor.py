@@ -49,18 +49,18 @@ class CtrlAutor(AbstractCtrl):
                 else:
                     autor.add_manga(manga)
                     self.__tela_autor.mostra_mensagem("Autor e manga associados!")
-            else:
-                self.__tela_autor.mostra_mensagem("Nenhum autor foi cadastrado!")
+        else:
+            self.__tela_autor.mostra_mensagem("Nenhum autor foi cadastrado!")
 
     def __existe_autor(self):
         self.listar_autores()
-        while True:
-            nome_autor = self.__tela_autor.seleciona_autor()
-            autor = self.find_autor_by_nome(nome_autor)
-            if autor != None:
-                return autor
-            else:
-                self.__tela_autor.mostra_mensagem("Atencao! Este autor nao existe!\n")
+        nome_autor = self.__tela_autor.seleciona_autor()
+        autor = self.find_autor_by_nome(nome_autor)
+        if autor != None:
+            return autor
+        else:
+            self.__tela_autor.mostra_mensagem("Atencao! Este autor nao existe!\n")
+            self.abrir_tela()
     
     def __existe_manga(self):        
         ctrl_manga = self.ctrl_principal.ctrl_manga
