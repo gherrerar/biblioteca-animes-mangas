@@ -5,16 +5,19 @@ class TelaUsuarioComum(AbstractTela):
     def __init__(self):
         pass
 
-    def mostra_opcoes(self, usuarios_comum: []) -> int:
+    def mostra_opcoes(self, usuario_logado) -> int:
         print(f"{'USUARIO COMUM':-^30}")
         print("1 - Listar")
         print("2 - Cadastrar")
-        if usuarios_comum:
-            print("3 - Opcoes Anime")
-            print("4 - Opcoes Manga")
+        print("3 - Login")
+        if usuario_logado:
+            print("4 - Logout")
+            print("5 - Opcoes Anime")
+            print("6 - Opcoes Manga")
         print("0 - Voltar")
 
-        opcao = super().le_num_inteiro("Escolha uma opcao: ", range(5 if usuarios_comum else 3))
+        opcao = super().le_num_inteiro("Escolha uma opcao: ", 
+                                       range(7 if usuario_logado else 5))
         return opcao
 
     def mostra_opcoes_anime(self) -> int:

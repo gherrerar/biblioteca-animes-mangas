@@ -9,6 +9,7 @@ from entidade.exemplar import Estado
 class CtrlUsuarioComum(AbstractCtrl):
     def __init__(self, ctrl_principal):
         self.__usuarios_comum = []
+        self.__usuario_logado = None
         self.__tela_usuario_comum = TelaUsuarioComum()
         super().__init__(ctrl_principal)
 
@@ -16,18 +17,21 @@ class CtrlUsuarioComum(AbstractCtrl):
         opcoes = {
             1: self.listar_usuarios_comum,
             2: self.incluir_usuario_comum,
+            3: self.login_usuario,
             0: self.retornar
         }
 
         while True:
-            if self.__usuarios_comum:
-                opcoes[3] = self.abrir_tela_animes
-                opcoes[4] = self.abrir_tela_mangas
-            opcoes[self.__tela_usuario_comum.mostra_opcoes(self.__usuarios_comum)]()
+            if self.__usuario_logado:
+                opcoes[4] = self.logout_usuario
+                opcoes[5] = self.abrir_tela_animes
+                opcoes[6] = self.abrir_tela_mangas
+            opcoes[self.__tela_usuario_comum.mostra_opcoes(
+                self.__usuario_logado)]()
 
-    def listar_usuarios_comum(self):
+    def listar_usuarios_comum(self, logado: UsuarioComum = None):
         if self.__usuarios_comum:
-            for usuario in self.__usuarios_comum:
+            for usuario in [logado] if logado else self.__usuarios_comum:
                 self.__tela_usuario_comum.mostra_usuario({
                     'nome': usuario.nome,
                     'animes': ', '.join(exemplar.anime.titulo for exemplar in usuario.animes),
@@ -37,7 +41,7 @@ class CtrlUsuarioComum(AbstractCtrl):
             self.__tela_usuario_comum.mostra_usuario(None)
 
     def incluir_usuario_comum(self):
-        dados_usuario= self.__tela_usuario_comum.recolhe_dados_usuario()
+        dados_usuario = self.__tela_usuario_comum.recolhe_dados_usuario()
         usuario = self.find_usuario_by_nome(dados_usuario['nome'])
         if usuario != None:
             self.__tela_usuario_comum.mostra_mensagem("Atencao! Este usuario comum ja existe!")
@@ -68,7 +72,7 @@ class CtrlUsuarioComum(AbstractCtrl):
             opcoes[self.__tela_usuario_comum.mostra_opcoes_anime()]()
 
     def listar_animes(self):
-        usuario = self.__existe_usuario()
+        usuario = self.__usuario_logado
         if usuario.animes:
             for exemplar in usuario.animes:
                 self.__tela_usuario_comum.mostra_etiqueta(exemplar.etiqueta.value)
@@ -84,20 +88,24 @@ class CtrlUsuarioComum(AbstractCtrl):
             self.__tela_usuario_comum.mostra_mensagem("Atencao! Nao existem animes vinculados a este usuario!")
 
     def incluir_anime(self):
-        def logica_criacao(usuario, anime):
+        def logica_criacao(anime):
+            usuario = self.__usuario_logado
             exemplar = ExemplarAnime(anime, Estado.EM_ANDAMENTO)
             usuario.add_anime(exemplar)
             self.__tela_usuario_comum.mostra_mensagem("Anime vinculado a este usuario!\n")
+            self.listar_usuarios_comum(usuario)
         self.__executa_se_existe_exemplar_anime(logica_criacao, True)
 
     def remover_anime(self):
-        def logica_remocao(usuario, exemplar):
+        def logica_remocao(exemplar):
+            usuario = self.__usuario_logado
             usuario.rem_anime(exemplar)
             self.__tela_usuario_comum.mostra_mensagem("Anime removido deste usuario!")
+            self.listar_usuarios_comum(usuario)
         self.__executa_se_existe_exemplar_anime(logica_remocao)
 
     def alterar_etiqueta_anime(self):
-        def logica_alteracao(usuario, exemplar):
+        def logica_alteracao(exemplar):
             self.__tela_usuario_comum.mostra_valores_etiqueta(Estado)
             valor_etiqueta = self.__tela_usuario_comum.recolhe_dados_etiqueta()
             etiqueta = self.find_etiqueta_by_estado(valor_etiqueta)
@@ -114,7 +122,7 @@ class CtrlUsuarioComum(AbstractCtrl):
         self.__calcular_total_consumo('anime', 'total_horas_assistidas')
 
     def listar_ultimos_animes(self):
-        usuario = self.__existe_usuario()
+        usuario = self.__usuario_logado
         ultimos_animes = usuario.ultimos_animes()
         if ultimos_animes:
             for exemplar in ultimos_animes:
@@ -149,7 +157,7 @@ class CtrlUsuarioComum(AbstractCtrl):
             opcoes[self.__tela_usuario_comum.mostra_opcoes_manga()]()
 
     def listar_mangas(self):
-        usuario = self.__existe_usuario()
+        usuario = self.__usuario_logado
         if usuario.mangas:
             for exemplar in usuario.mangas:
                 self.__tela_usuario_comum.mostra_etiqueta(exemplar.etiqueta.value)
@@ -165,20 +173,24 @@ class CtrlUsuarioComum(AbstractCtrl):
             self.__tela_usuario_comum.mostra_mensagem("Atencao! Nao existem mangas vinculados a este usuario!")
 
     def incluir_manga(self):
-        def logica_criacao(usuario, manga):
+        def logica_criacao(manga):
+            usuario = self.__usuario_logado
             exemplar = ExemplarManga(manga, Estado.EM_ANDAMENTO)
             usuario.add_manga(exemplar)
             self.__tela_usuario_comum.mostra_mensagem("Manga vinculado a este usuario!\n")
+            self.listar_usuarios_comum(usuario)
         self.__executa_se_existe_exemplar_manga(logica_criacao, True)
 
     def remover_manga(self):
-        def logica_remocao(usuario, exemplar):
+        def logica_remocao(exemplar):
+            usuario = self.__usuario_logado
             usuario.rem_manga(exemplar)
             self.__tela_usuario_comum.mostra_mensagem("Manga removido deste usuario!")
+            self.listar_usuarios_comum(usuario)
         self.__executa_se_existe_exemplar_manga(logica_remocao)
 
     def alterar_etiqueta_manga(self):
-        def logica_alteracao(usuario, exemplar):
+        def logica_alteracao(exemplar):
             self.__tela_usuario_comum.mostra_valores_etiqueta(Estado)
             valor_etiqueta = self.__tela_usuario_comum.recolhe_dados_etiqueta()
             etiqueta = self.find_etiqueta_by_estado(valor_etiqueta)
@@ -195,7 +207,7 @@ class CtrlUsuarioComum(AbstractCtrl):
         self.__calcular_total_consumo('manga', 'total_paginas_lidas')
 
     def listar_ultimos_mangas(self):
-        usuario = self.__existe_usuario()
+        usuario = self.__usuario_logado
         ultimos_mangas = usuario.ultimos_mangas()
         if ultimos_mangas:
             for exemplar in ultimos_mangas:
@@ -214,30 +226,38 @@ class CtrlUsuarioComum(AbstractCtrl):
     def listar_principal_genero_mangas(self):
         self.__listar_principal_genero('manga', 'principal_genero_mangas')
 
+    def login_usuario(self):
+        dados_usuario = self.__tela_usuario_comum.recolhe_dados_usuario()
+        usuario = self.find_usuario_by_nome(dados_usuario['nome'])
+        if usuario != None:
+            if usuario.senha != dados_usuario['senha']:
+                self.__tela_usuario_comum.mostra_mensagem("Atencao! Senha incorreta!")
+            else:
+                self.__usuario_logado = usuario
+                self.__tela_usuario_comum.mostra_mensagem(f"Bem vindo(a), {usuario.nome}!")
+        else:
+            self.__tela_usuario_comum.mostra_mensagem(
+                "Atencao! Este usuario comum nao existe")
+
+    def logout_usuario(self):
+        self.__tela_usuario_comum.mostra_mensagem(
+            f"Até logo, {self.__usuario_logado.nome}!")
+        self.__usuario_logado = None
+
     def __calcular_total_consumo(self, obra: str, metodo: str):
-        usuario = self.__existe_usuario()
+        usuario = self.__usuario_logado
         metodo = getattr(usuario, metodo)
         total_consumo = metodo()
         self.__tela_usuario_comum.mostra_total_consumo(obra, total_consumo)
 
     def __listar_principal_genero(self, obra: str, metodo: str):
-        usuario = self.__existe_usuario()
+        usuario = self.__usuario_logado
         metodo = getattr(usuario, metodo)
         principal_genero = metodo()
         if principal_genero != None:
             self.__tela_usuario_comum.mostra_genero(principal_genero)
         else:
             self.__tela_usuario_comum.mostra_mensagem(f"Atencao! Nao existem {obra}s vinculados a este usuario")
-
-    def __existe_usuario(self):
-        self.listar_usuarios_comum()
-        while True:
-            nome = self.__tela_usuario_comum.seleciona_usuario()
-            usuario = self.find_usuario_by_nome(nome)
-            if usuario != None:
-                return usuario
-            else:
-                self.__tela_usuario_comum.mostra_mensagem("Atencao! Este usuario nao existe!\n")
 
     def __existe_anime(self):
         ctrl_anime = self.ctrl_principal.ctrl_anime
@@ -262,7 +282,7 @@ class CtrlUsuarioComum(AbstractCtrl):
             self.abrir_tela_mangas()
 
     def __executa_se_existe_exemplar_anime(self, func_crud, create_case = False):
-        usuario = self.__existe_usuario()
+        usuario = self.__usuario_logado
         anime = self.__existe_anime()
         if anime is not None and usuario is not None:
             exemplar = self.find_exemplar_by_anime(anime.titulo, usuario)
@@ -270,15 +290,15 @@ class CtrlUsuarioComum(AbstractCtrl):
                 if create_case:
                     self.__tela_usuario_comum.mostra_mensagem("Atencao! Este anime ja esta vinculado a este usuario!")
                 else:
-                    func_crud(usuario, exemplar)
+                    func_crud(exemplar)
             else:
                 if not create_case:
                     self.__tela_usuario_comum.mostra_mensagem("Atencao! Este anime nao esta vinculado a este usuario!")
                 else:
-                    func_crud(usuario, anime)
+                    func_crud(anime)
 
     def __executa_se_existe_exemplar_manga(self, func_crud, create_case = False):
-        usuario = self.__existe_usuario()
+        usuario = self.__usuario_logado
         manga = self.__existe_manga()
         if manga is not None and usuario is not None:
             exemplar = self.find_exemplar_by_manga(manga.titulo, usuario)
@@ -286,12 +306,12 @@ class CtrlUsuarioComum(AbstractCtrl):
                 if create_case:
                     self.__tela_usuario_comum.mostra_mensagem("Atencao! Este manga ja esta vinculado a este usuario!")
                 else:
-                    func_crud(usuario, exemplar)
+                    func_crud(exemplar)
             else:
                 if not create_case:
                     self.__tela_usuario_comum.mostra_mensagem("Atencao! Este manga nao esta vinculado a este usuario!")
                 else:
-                    func_crud(usuario, manga)
+                    func_crud(manga)
 
     def find_usuario_by_nome(self, nome: str) -> UsuarioComum | None:
         if self.__usuarios_comum and isinstance(nome, str):
