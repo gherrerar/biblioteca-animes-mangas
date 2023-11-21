@@ -1,5 +1,6 @@
 from controle.abstractCtrl import AbstractCtrl
 from limite.telaUsuarioComum import TelaUsuarioComum
+from dao.usuarioComumDAO import UsuarioComumDAO
 from entidade.usuarioComum import UsuarioComum
 from entidade.exemplarAnime import ExemplarAnime
 from entidade.exemplarManga import ExemplarManga
@@ -8,7 +9,7 @@ from entidade.exemplar import Estado
 
 class CtrlUsuarioComum(AbstractCtrl):
     def __init__(self, ctrl_principal):
-        self.__usuarios_comum = []
+        self.__usuario_comum_dao = UsuarioComumDAO()
         self.__usuario_logado = None
         self.__tela_usuario_comum = TelaUsuarioComum()
         super().__init__(ctrl_principal)
@@ -29,9 +30,13 @@ class CtrlUsuarioComum(AbstractCtrl):
             opcoes[self.__tela_usuario_comum.mostra_opcoes(
                 self.__usuario_logado)]()
 
+    @property
+    def __usuarios(self):
+        return self.__usuario_comum_dao.get_all()
+
     def listar_usuarios_comum(self, logado: UsuarioComum = None):
-        if self.__usuarios_comum:
-            for usuario in [logado] if logado else self.__usuarios_comum:
+        if self.__usuarios:
+            for usuario in [logado] if logado else self.__usuarios:
                 self.__tela_usuario_comum.mostra_usuario({
                     'nome': usuario.nome,
                     'animes': ', '.join(exemplar.anime.titulo for exemplar in usuario.animes),
@@ -43,14 +48,14 @@ class CtrlUsuarioComum(AbstractCtrl):
     def incluir_usuario_comum(self):
         dados_usuario = self.__tela_usuario_comum.recolhe_dados_usuario()
         usuario = self.find_usuario_by_nome(dados_usuario['nome'])
-        if usuario != None:
+        if usuario is not None:
             self.__tela_usuario_comum.mostra_mensagem("Atencao! Este usuario comum ja existe!")
         else:
             usuario = UsuarioComum(
                 dados_usuario['nome'],
                 dados_usuario['senha']
             )
-            self.__usuarios_comum.append(usuario)
+            self.__usuario_comum_dao.add(usuario)
             self.__tela_usuario_comum.mostra_mensagem("Usuario cadastrado!\n")
 
     def retornar_usuario_comum(self):
@@ -229,7 +234,7 @@ class CtrlUsuarioComum(AbstractCtrl):
     def login_usuario(self):
         dados_usuario = self.__tela_usuario_comum.recolhe_dados_usuario()
         usuario = self.find_usuario_by_nome(dados_usuario['nome'])
-        if usuario != None:
+        if usuario is not None:
             if usuario.senha != dados_usuario['senha']:
                 self.__tela_usuario_comum.mostra_mensagem("Atencao! Senha incorreta!")
             else:
@@ -291,11 +296,13 @@ class CtrlUsuarioComum(AbstractCtrl):
                     self.__tela_usuario_comum.mostra_mensagem("Atencao! Este anime ja esta vinculado a este usuario!")
                 else:
                     func_crud(exemplar)
+                    self.__usuario_comum_dao.add(usuario)
             else:
                 if not create_case:
                     self.__tela_usuario_comum.mostra_mensagem("Atencao! Este anime nao esta vinculado a este usuario!")
                 else:
                     func_crud(anime)
+                    self.__usuario_comum_dao.add(usuario)
 
     def __executa_se_existe_exemplar_manga(self, func_crud, create_case = False):
         usuario = self.__usuario_logado
@@ -307,17 +314,19 @@ class CtrlUsuarioComum(AbstractCtrl):
                     self.__tela_usuario_comum.mostra_mensagem("Atencao! Este manga ja esta vinculado a este usuario!")
                 else:
                     func_crud(exemplar)
+                    self.__usuario_comum_dao.add(usuario)
             else:
                 if not create_case:
                     self.__tela_usuario_comum.mostra_mensagem("Atencao! Este manga nao esta vinculado a este usuario!")
                 else:
                     func_crud(manga)
+                    self.__usuario_comum_dao.add(usuario)
 
     def find_usuario_by_nome(self, nome: str) -> UsuarioComum | None:
-        if self.__usuarios_comum and isinstance(nome, str):
-            for usuario in self.__usuarios_comum:
-                if usuario.nome == nome:
-                    return usuario
+        if isinstance(nome, str):
+            usuario = self.__usuario_comum_dao.get(nome)
+            if usuario:
+                return usuario
             return None
 
     def find_exemplar_by_anime(self, titulo_anime: str, usuario: UsuarioComum) -> ExemplarAnime | None:
