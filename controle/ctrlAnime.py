@@ -1,11 +1,12 @@
 from controle.abstractCtrl import AbstractCtrl
 from entidade.anime import Anime
 from limite.telaAnime import TelaAnime
+from dao.animeDAO import AnimeDAO
 
 
 class CtrlAnime(AbstractCtrl):
     def __init__(self, ctrl_principal):
-        self.__animes = []
+        self.__anime_dao = AnimeDAO()
         self.__tela_anime = TelaAnime()
         super().__init__(ctrl_principal)
 
@@ -40,6 +41,10 @@ class CtrlAnime(AbstractCtrl):
         self.ctrl_principal.ctrl_estudio.abrir_tela()
 
     @property
+    def __animes(self):
+        return self.__anime_dao.get_all()
+
+    @property
     def tela_anime(self):
         return self.__tela_anime
 
@@ -71,7 +76,7 @@ class CtrlAnime(AbstractCtrl):
                 dados_anime['genero'],
                 dados_anime['num_temporadas']
             )
-            self.__animes.append(anime)
+            self.__anime_dao.add(anime)
             self.__tela_anime.mostra_mensagem("Anime cadastrado!\n")
 
     def editar_anime(self):
@@ -88,9 +93,9 @@ class CtrlAnime(AbstractCtrl):
 
     def remover_anime(self):
         def logica_remocao(anime):
-            self.__animes.remove(anime)
+            self.__anime_dao.remove(anime.titulo)
             self.__tela_anime.mostra_mensagem("Anime removido!\n")
-        self.__executa_se_existe_anime(logica_remocao)
+        self.__executa_se_existe_anime(logica_remocao, True)
 
     def listar_temporadas_anime(self):
         def logica_lista_temporada(anime):
@@ -145,6 +150,7 @@ class CtrlAnime(AbstractCtrl):
                             )
                             self.__tela_anime.mostra_mensagem("Episódio inserido!\n")
                             break
+                self.__tela_anime.mostra_mensagem("Temporada completa!\n")
             self.__executa_se_existe_temporada_anime(anime, logica_inclusao_episodios)
         self.__executa_se_existe_anime(seleciona_anime)
 
@@ -175,7 +181,7 @@ class CtrlAnime(AbstractCtrl):
         ctrl_genero.incluir_genero(nome_genero)
         dados_anime['genero'] = ctrl_genero.find_genero_by_nome(nome_genero)
 
-    def __executa_se_existe_anime(self, func_crud):
+    def __executa_se_existe_anime(self, func_crud, remove_case = False):
         self.listar_animes()
         if self.__animes:
             while True:
@@ -183,6 +189,8 @@ class CtrlAnime(AbstractCtrl):
                 anime = self.find_anime_by_titulo(titulo)
                 if anime != None:
                     func_crud(anime)
+                    if not remove_case:
+                        self.__anime_dao.add(anime)
                     break
                 else:
                     self.__tela_anime.mostra_mensagem("Atenção! Este anime não existe\n")
@@ -199,10 +207,10 @@ class CtrlAnime(AbstractCtrl):
             self.__tela_anime.mostra_mensagem("Nenhuma temporada foi cadastrada neste anime\n")
 
     def find_anime_by_titulo(self, titulo: str) -> Anime | None:
-        if self.__animes and isinstance(titulo, str):
-            for ani in self.__animes:
-                if ani.titulo == titulo:
-                    return ani
+        if isinstance(titulo, str):
+            anime = self.__anime_dao.get(titulo)
+            if anime:
+                return anime
             return None
 
     def retornar(self):
