@@ -1,11 +1,12 @@
 from controle.abstractCtrl import AbstractCtrl
 from entidade.usuarioAdministrador import UsuarioAdministrador
 from limite.telaUsuarioAdministrador import TelaUsuarioAdministrador
+from entidade.dao import DAO
 
 
 class CtrlUsuarioAdministrador(AbstractCtrl):
     def __init__(self, ctrl_principal):
-        self.__usuarios_admin = []
+        self.__usuario_admin_dao = DAO('nome', str)
         self.__usuario_logado = None
         self.__tela_usuario_admin = TelaUsuarioAdministrador()
         super().__init__(ctrl_principal)
@@ -32,9 +33,13 @@ class CtrlUsuarioAdministrador(AbstractCtrl):
     def abrir_tela_mangas(self):
         self.ctrl_principal.ctrl_manga.abrir_tela()
 
+    @property
+    def __usuarios(self):
+        return self.__usuario_admin_dao.get_all()
+
     def listar_usuarios(self):
-        if self.__usuarios_admin:
-            for usuario in self.__usuarios_admin:
+        if self.__usuarios:
+            for usuario in self.__usuarios:
                 self.__tela_usuario_admin.mostra_usuario(usuario.nome)
         else:
             self.__tela_usuario_admin.mostra_usuario(None)
@@ -50,7 +55,7 @@ class CtrlUsuarioAdministrador(AbstractCtrl):
                 dados_usuario['nome'],
                 dados_usuario['senha']
             )
-            self.__usuarios_admin.append(usuario)
+            self.__usuario_admin_dao.add(usuario)
             self.__tela_usuario_admin.mostra_mensagem("Usuário cadastrado!\n")
 
     def login_usuario(self):
@@ -72,8 +77,8 @@ class CtrlUsuarioAdministrador(AbstractCtrl):
         self.__usuario_logado = None
 
     def find_usuario_by_nome(self, nome: str) -> UsuarioAdministrador | None:
-        if self.__usuarios_admin and isinstance(nome, str):
-            for usuario in self.__usuarios_admin:
-                if usuario.nome == nome:
-                    return usuario
+        if isinstance(nome, str):
+            usuario = self.__usuario_admin_dao.get(nome)
+            if usuario:
+                return usuario
             return None

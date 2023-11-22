@@ -93,7 +93,7 @@ class CtrlManga(AbstractCtrl):
 
     def remover_manga(self):
         def logica_remocao(manga):
-            self.__mangas.remove(manga)
+            self.__manga_dao.remove(manga.titulo)
             self.__tela_manga.mostra_mensagem("Manga removido!\n")
         self.__executa_se_existe_manga(logica_remocao, True)
 
