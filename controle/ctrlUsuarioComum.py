@@ -1,15 +1,15 @@
 from controle.abstractCtrl import AbstractCtrl
 from limite.telaUsuarioComum import TelaUsuarioComum
-from dao.usuarioComumDAO import UsuarioComumDAO
 from entidade.usuarioComum import UsuarioComum
 from entidade.exemplarAnime import ExemplarAnime
 from entidade.exemplarManga import ExemplarManga
 from entidade.exemplar import Estado
+from entidade.dao import DAO
 
 
 class CtrlUsuarioComum(AbstractCtrl):
     def __init__(self, ctrl_principal):
-        self.__usuario_comum_dao = UsuarioComumDAO()
+        self.__usuario_comum_dao = DAO('nome', str)
         self.__usuario_logado = None
         self.__tela_usuario_comum = TelaUsuarioComum()
         super().__init__(ctrl_principal)
