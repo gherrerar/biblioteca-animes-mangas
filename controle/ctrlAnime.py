@@ -1,12 +1,12 @@
 from controle.abstractCtrl import AbstractCtrl
 from entidade.anime import Anime
 from limite.telaAnime import TelaAnime
-from dao.animeDAO import AnimeDAO
+from entidade.dao import DAO
 
 
 class CtrlAnime(AbstractCtrl):
     def __init__(self, ctrl_principal):
-        self.__anime_dao = AnimeDAO()
+        self.__anime_dao = DAO('titulo', str)
         self.__tela_anime = TelaAnime()
         super().__init__(ctrl_principal)
 
