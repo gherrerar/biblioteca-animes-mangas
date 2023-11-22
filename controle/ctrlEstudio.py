@@ -1,11 +1,12 @@
 from controle.abstractCtrl import AbstractCtrl
 from limite.telaEstudio import TelaEstudio
 from entidade.estudio import Estudio
+from entidade.dao import DAO
 
 
 class CtrlEstudio(AbstractCtrl):
     def __init__(self, ctrl_principal):
-        self.__estudios = []
+        self.__estudio_dao = DAO('nome', str)
         self.__tela_estudio = TelaEstudio()
         super().__init__(ctrl_principal)
 
@@ -19,6 +20,14 @@ class CtrlEstudio(AbstractCtrl):
     
         while True:
             opcoes[self.__tela_estudio.mostra_opcoes()]()
+
+    @property
+    def estudio_dao(self):
+        return self.__estudio_dao
+
+    @property
+    def __estudios(self):
+        return self.__estudio_dao.get_all()
 
     def listar_estudios(self):
         if self.__estudios:
@@ -36,7 +45,7 @@ class CtrlEstudio(AbstractCtrl):
             self.__tela_estudio.mostra_mensagem("Atencao! Este estudio ja existe!\n")
         else:
             estudio = Estudio(nome_estudio)
-            self.__estudios.append(estudio)
+            self.__estudio_dao.add(estudio)
             self.__tela_estudio.mostra_mensagem("Estudio cadastrado!")
 
     def incluir_anime(self):
@@ -49,6 +58,9 @@ class CtrlEstudio(AbstractCtrl):
                 else:
                     estudio.add_anime(anime)
                     self.__tela_estudio.mostra_mensagem("Estudio e anime associados!")
+                self.__estudio_dao.add(estudio)
+                anime_dao = self.ctrl_principal.ctrl_anime.anime_dao
+                anime_dao.add(anime)
         else:
             self.__tela_estudio.mostra_mensagem("Nenhum estudio foi cadastrado!")
 
@@ -74,10 +86,10 @@ class CtrlEstudio(AbstractCtrl):
             self.abrir_tela()
 
     def find_estudio_by_nome(self, nome: str) -> Estudio | None:
-        if self.__estudios and isinstance(nome, str):
-            for estudio in self.__estudios:
-                if estudio.nome == nome:
-                    return estudio
+        if isinstance(nome, str):
+            estudio = self.__estudio_dao.get(nome)
+            if estudio:
+                return estudio
             return None
 
     def retornar(self):

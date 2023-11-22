@@ -41,6 +41,10 @@ class CtrlAnime(AbstractCtrl):
         self.ctrl_principal.ctrl_estudio.abrir_tela()
 
     @property
+    def anime_dao(self):
+        return self.__anime_dao
+
+    @property
     def __animes(self):
         return self.__anime_dao.get_all()
 
@@ -93,6 +97,11 @@ class CtrlAnime(AbstractCtrl):
 
     def remover_anime(self):
         def logica_remocao(anime):
+            estudio = anime.estudio
+            if estudio:
+                estudio.animes_produzidos.remove(anime)
+                estudio_dao = self.ctrl_principal.ctrl_estudio.estudio_dao
+                estudio_dao.add(estudio)
             self.__anime_dao.remove(anime.titulo)
             self.__tela_anime.mostra_mensagem("Anime removido!\n")
         self.__executa_se_existe_anime(logica_remocao, True)
