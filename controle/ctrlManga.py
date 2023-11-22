@@ -1,11 +1,12 @@
 from controle.abstractCtrl import AbstractCtrl
 from limite.telaManga import TelaManga
 from entidade.manga import Manga
+from entidade.dao import DAO
 
 
 class CtrlManga(AbstractCtrl):
     def __init__(self, ctrl_principal):
-        self.__mangas = []
+        self.__manga_dao = DAO("titulo", str)
         self.__tela_manga = TelaManga()
         super().__init__(ctrl_principal)
 
@@ -40,6 +41,10 @@ class CtrlManga(AbstractCtrl):
         self.ctrl_principal.ctrl_autor.abrir_tela()
 
     @property
+    def __mangas(self):
+        return self.__manga_dao.get_all()
+
+    @property
     def tela_manga(self):
         return self.__tela_manga
 
@@ -71,7 +76,7 @@ class CtrlManga(AbstractCtrl):
                 dados_manga['genero'],
                 dados_manga['num_volumes']
             )
-            self.__mangas.append(manga)
+            self.__manga_dao.add(manga)
             self.__tela_manga.mostra_mensagem("Manga cadastrado!\n")
 
     def editar_manga(self):
@@ -90,7 +95,7 @@ class CtrlManga(AbstractCtrl):
         def logica_remocao(manga):
             self.__mangas.remove(manga)
             self.__tela_manga.mostra_mensagem("Manga removido!\n")
-        self.__executa_se_existe_manga(logica_remocao)
+        self.__executa_se_existe_manga(logica_remocao, True)
 
     def listar_volumes_manga(self):
         def logica_lista_volume(manga):
@@ -145,6 +150,7 @@ class CtrlManga(AbstractCtrl):
                             )
                             self.__tela_manga.mostra_mensagem("Capitulo inserido!\n")
                             break
+                self.__tela_manga.mostra_mensagem("Volume completo!\n")
             self.__executa_se_existe_volume_manga(manga, logica_inclusao_capitulos)
         self.__executa_se_existe_manga(seleciona_manga)
 
@@ -175,7 +181,7 @@ class CtrlManga(AbstractCtrl):
         ctrl_genero.incluir_genero(nome_genero)
         dados_manga['genero'] = ctrl_genero.find_genero_by_nome(nome_genero)
 
-    def __executa_se_existe_manga(self, func_crud):
+    def __executa_se_existe_manga(self, func_crud, remove_case = False):
         self.listar_mangas()
         if self.__mangas:
             while True:
@@ -183,6 +189,8 @@ class CtrlManga(AbstractCtrl):
                 manga = self.find_manga_by_titulo(titulo)
                 if manga != None:
                     func_crud(manga)
+                    if not remove_case:
+                        self.__manga_dao.add(manga)
                     break
                 else:
                     self.__tela_manga.mostra_mensagem("Atencao! Este manga nao existe!\n")
@@ -198,11 +206,11 @@ class CtrlManga(AbstractCtrl):
         else:
             self.__tela_manga.mostra_mensagem("Nenhum volume foi cadastrado neste manga\n")
 
-    def find_manga_by_titulo(self, titulo: str = '') -> Manga | None:
-        if self.__mangas and isinstance(titulo, str):
-            for manga in self.__mangas:
-                if manga.titulo == titulo:
-                    return manga
+    def find_manga_by_titulo(self, titulo: str) -> Manga | None:
+        if isinstance(titulo, str):
+            manga = self.__manga_dao.get(titulo)
+            if manga:
+                return manga
             return None
 
     def retornar(self):
