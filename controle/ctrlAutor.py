@@ -1,11 +1,12 @@
 from controle.abstractCtrl import AbstractCtrl
 from limite.telaAutor import TelaAutor
 from entidade.autor import Autor
+from entidade.dao import DAO
 
 
 class CtrlAutor(AbstractCtrl):
     def __init__(self, ctrl_principal):
-        self.__autores = []
+        self.__autor_dao = DAO('nome', str)
         self.__tela_autor = TelaAutor()
         super().__init__(ctrl_principal)
 
@@ -19,6 +20,14 @@ class CtrlAutor(AbstractCtrl):
     
         while True:
             opcoes[self.__tela_autor.mostra_opcoes()]()
+
+    @property
+    def autor_dao(self):
+        return self.__autor_dao
+
+    @property
+    def __autores(self):
+        return self.__autor_dao.get_all()
 
     def listar_autores(self):
         if self.__autores:
@@ -36,7 +45,7 @@ class CtrlAutor(AbstractCtrl):
             self.__tela_autor.mostra_mensagem("Atencao! Este autor ja existe!\n")
         else:
             autor = Autor(nome_autor)
-            self.__autores.append(autor)
+            self.__autor_dao.add(autor)
             self.__tela_autor.mostra_mensagem("Autor cadastrado!")
 
     def incluir_manga(self):
@@ -49,6 +58,9 @@ class CtrlAutor(AbstractCtrl):
                 else:
                     autor.add_manga(manga)
                     self.__tela_autor.mostra_mensagem("Autor e manga associados!")
+                self.__autor_dao.add(autor)
+                manga_dao = self.ctrl_principal.ctrl_manga.manga_dao
+                manga_dao.add(manga)
         else:
             self.__tela_autor.mostra_mensagem("Nenhum autor foi cadastrado!")
 
@@ -74,10 +86,10 @@ class CtrlAutor(AbstractCtrl):
             self.abrir_tela()
 
     def find_autor_by_nome(self, nome: str) -> Autor | None:
-        if self.__autores and isinstance(nome, str):
-            for autor in self.__autores:
-                if autor.nome == nome:
-                    return autor
+        if isinstance(nome, str):
+            autor = self.__autor_dao.get(nome)
+            if autor:
+                return autor
             return None
 
     def retornar(self):

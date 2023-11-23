@@ -41,6 +41,10 @@ class CtrlManga(AbstractCtrl):
         self.ctrl_principal.ctrl_autor.abrir_tela()
 
     @property
+    def manga_dao(self):
+        return self.__manga_dao
+
+    @property
     def __mangas(self):
         return self.__manga_dao.get_all()
 
@@ -93,6 +97,11 @@ class CtrlManga(AbstractCtrl):
 
     def remover_manga(self):
         def logica_remocao(manga):
+            autor = manga.autor
+            if autor:
+                autor.mangas_produzidos.remove(manga)
+                autor_dao = self.ctrl_principal.ctrl_autor.autor_dao
+                autor_dao.add(autor)
             self.__manga_dao.remove(manga.titulo)
             self.__tela_manga.mostra_mensagem("Manga removido!\n")
         self.__executa_se_existe_manga(logica_remocao, True)
