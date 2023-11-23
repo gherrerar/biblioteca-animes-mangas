@@ -1,11 +1,12 @@
 from controle.abstractCtrl import AbstractCtrl
 from entidade.genero import Genero
 from limite.telaGenero import TelaGenero
+from entidade.dao import DAO
 
 
 class CtrlGenero(AbstractCtrl):
     def __init__(self, ctrl_principal):
-        self.__generos = []
+        self.__genero_dao = DAO('nome', str)
         self.__tela_genero = TelaGenero()
         super().__init__(ctrl_principal)
 
@@ -23,6 +24,10 @@ class CtrlGenero(AbstractCtrl):
         while True:
             opcoes[self.__tela_genero.mostra_opcoes()]()
 
+    @property
+    def __generos(self):
+        return self.__genero_dao.get_all()
+
     def listar_generos(self):
         if self.__generos:
             for gen in self.__generos:
@@ -34,11 +39,11 @@ class CtrlGenero(AbstractCtrl):
         nome_genero = nome or self.__tela_genero.recolhe_dados_genero()
         if self.find_genero_by_nome(nome_genero) == None:
             genero = Genero(nome_genero)
-            self.__generos.append(genero)
+            self.__genero_dao.add(genero)
 
     def find_genero_by_nome(self, nome: str) -> Genero | None:
-        if self.__generos and isinstance(nome, str):
-            for gen in self.__generos:
-                if gen.nome == nome:
-                    return gen
+        if isinstance(nome, str):
+            genero = self.__genero_dao.get(nome)
+            if genero:
+                return genero
             return None

@@ -58,9 +58,9 @@ class CtrlEstudio(AbstractCtrl):
                 else:
                     estudio.add_anime(anime)
                     self.__tela_estudio.mostra_mensagem("Estudio e anime associados!")
-                self.__estudio_dao.add(estudio)
-                anime_dao = self.ctrl_principal.ctrl_anime.anime_dao
-                anime_dao.add(anime)
+                    self.__estudio_dao.add(estudio)
+                    anime_dao = self.ctrl_principal.ctrl_anime.anime_dao
+                    anime_dao.add(anime)
         else:
             self.__tela_estudio.mostra_mensagem("Nenhum estudio foi cadastrado!")
 

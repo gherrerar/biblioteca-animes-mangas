@@ -58,9 +58,9 @@ class CtrlAutor(AbstractCtrl):
                 else:
                     autor.add_manga(manga)
                     self.__tela_autor.mostra_mensagem("Autor e manga associados!")
-                self.__autor_dao.add(autor)
-                manga_dao = self.ctrl_principal.ctrl_manga.manga_dao
-                manga_dao.add(manga)
+                    self.__autor_dao.add(autor)
+                    manga_dao = self.ctrl_principal.ctrl_manga.manga_dao
+                    manga_dao.add(manga)
         else:
             self.__tela_autor.mostra_mensagem("Nenhum autor foi cadastrado!")
 
