@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from exceptions.outOfRangeException import OutOfRangeException
 
 
 class AbstractTela(ABC):
@@ -21,17 +22,18 @@ class AbstractTela(ABC):
                 inteiro = int(valor)
                 if nums_validos and inteiro not in nums_validos:
                     raise ValueError
-                if (minimo and inteiro < minimo) or (maximo and inteiro > maximo):
-                    raise ValueError
+                if (minimo and inteiro < minimo):
+                    raise OutOfRangeException(minimo, 'min')
+                if (maximo and inteiro > maximo):
+                    raise OutOfRangeException(maximo, 'max')
                 return inteiro
             except ValueError:
-                self.mostra_mensagem("Valor incorreto! Digite um número inteiro válido")
+                self.mostra_mensagem("Valor incorreto! Digite um número inteiro valido")
                 if nums_validos:
                     self.mostra_mensagem(">>> Valores válidos: ", *nums_validos)
-                if minimo:
-                    self.mostra_mensagem(">>> Mínimo: ", minimo)
-                if maximo:
-                    self.mostra_mensagem(">>> Máximo: ", maximo)
+            except OutOfRangeException as error:
+                self.mostra_mensagem("Valor incorreto! Digite um número inteiro valido")
+                self.mostra_mensagem(f"{error}")
             except KeyboardInterrupt:
                 self.mostra_mensagem("\nEncerrando o sistema...")
                 exit(0)
@@ -50,7 +52,7 @@ class AbstractTela(ABC):
                     raise ValueError
                 return texto.strip()
             except ValueError:
-                self.mostra_mensagem("Valor incorreto! Insira um texto não vazio")
+                self.mostra_mensagem("Valor incorreto! Insira um texto nao vazio")
             except KeyboardInterrupt:
                 self.mostra_mensagem("\nEncerrando o sistema...")
                 exit(0)
