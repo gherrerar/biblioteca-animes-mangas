@@ -2,6 +2,7 @@ from controle.abstractCtrl import AbstractCtrl
 from limite.telaManga import TelaManga
 from entidade.manga import Manga
 from entidade.dao import DAO
+from exceptions.existenceException import ExistenceException
 
 
 class CtrlManga(AbstractCtrl):
@@ -71,17 +72,20 @@ class CtrlManga(AbstractCtrl):
         dados_manga = self.__tela_manga.recolhe_dados_manga()
         self.__cria_genero(dados_manga)
 
-        if self.find_manga_by_titulo(dados_manga['titulo']) != None:
-            self.__tela_manga.mostra_mensagem("Atencao! Esse manga ja existe!\n")
-        else:
-            manga = Manga(
-                dados_manga['titulo'],
-                dados_manga['ano'],
-                dados_manga['genero'],
-                dados_manga['num_volumes']
-            )
-            self.__manga_dao.add(manga)
-            self.__tela_manga.mostra_mensagem("Manga cadastrado!\n")
+        try:
+            if self.find_manga_by_titulo(dados_manga['titulo']) != None:
+                raise ExistenceException("manga")
+            else:
+                manga = Manga(
+                    dados_manga['titulo'],
+                    dados_manga['ano'],
+                    dados_manga['genero'],
+                    dados_manga['num_volumes']
+                )
+                self.__manga_dao.add(manga)
+                self.__tela_manga.mostra_mensagem("Manga cadastrado!\n")
+        except ExistenceException as error:
+            self.__tela_manga.mostra_mensagem(f"{error}")
 
     def editar_manga(self):
         def logica_edicao(manga):
@@ -122,16 +126,19 @@ class CtrlManga(AbstractCtrl):
     def incluir_volume_manga(self):
         def logica_inclusao_volume(manga):
             while True:
-                dados_volume = self.__tela_manga.recolhe_dados_volume(manga.num_volumes)
-                volume = manga.add_volume(
-                    dados_volume['numero'],
-                    dados_volume['num_capitulos']
-                )
-                if volume != None:
-                    self.__tela_manga.mostra_mensagem("Volume inserido!\n")
-                    break
-                else:
-                    self.__tela_manga.mostra_mensagem("Atencao! Este volume ja existe!\n")
+                try:
+                    dados_volume = self.__tela_manga.recolhe_dados_volume(manga.num_volumes)
+                    volume = manga.add_volume(
+                        dados_volume['numero'],
+                        dados_volume['num_capitulos']
+                    )
+                    if volume != None:
+                        self.__tela_manga.mostra_mensagem("Volume inserido!\n")
+                        break
+                    else:
+                        raise ExistenceException("volume")
+                except ExistenceException as error:
+                    self.__tela_manga.mostra_mensagem(f"{error}")
         self.__executa_se_existe_manga(logica_inclusao_volume)
 
     def remover_volume_manga(self):
@@ -147,18 +154,21 @@ class CtrlManga(AbstractCtrl):
             def logica_inclusao_capitulos(volume):
                 for _ in range(abs(len(volume.capitulos)-volume.num_capitulos)):
                     while True:
-                        dados_capitulos = self.__tela_manga.recolhe_dados_capitulo(volume.num_capitulos)
-                        capitulo = volume.find_capitulo_by_numero(dados_capitulos['numero'])
-                        if capitulo != None:
-                            self.__tela_manga.mostra_mensagem("Atencao! Este capitulo ja existe!\n")
-                        else:
-                            manga.add_capitulo_volume(
-                                volume.numero,
-                                dados_capitulos['numero'],
-                                dados_capitulos['num_paginas']
-                            )
-                            self.__tela_manga.mostra_mensagem("Capitulo inserido!\n")
-                            break
+                        try:
+                            dados_capitulos = self.__tela_manga.recolhe_dados_capitulo(volume.num_capitulos)
+                            capitulo = volume.find_capitulo_by_numero(dados_capitulos['numero'])
+                            if capitulo != None:
+                                raise ExistenceException("capitulo")
+                            else:
+                                manga.add_capitulo_volume(
+                                    volume.numero,
+                                    dados_capitulos['numero'],
+                                    dados_capitulos['num_paginas']
+                                )
+                                self.__tela_manga.mostra_mensagem("Capitulo inserido!\n")
+                                break
+                        except ExistenceException as error:
+                            self.__tela_manga.mostra_mensagem(f"{error}")
                 self.__tela_manga.mostra_mensagem("Volume completo!\n")
             self.__executa_se_existe_volume_manga(manga, logica_inclusao_capitulos)
         self.__executa_se_existe_manga(seleciona_manga)
@@ -168,19 +178,22 @@ class CtrlManga(AbstractCtrl):
             def logica_remocao_capitulo(volume):
                 if volume.capitulos:
                     while True:
-                        numero_cap = self.__tela_manga.seleciona_capitulo(volume.num_capitulos)
-                        capitulo = volume.find_capitulo_by_numero(numero_cap)
-                        if capitulo != None:
-                            manga.rem_capitulo_volume(
-                                volume.numero,
-                                numero_cap
-                            )
-                            self.__tela_manga.mostra_mensagem("Capitulo removido!\n")
-                            break
-                        else:
-                            self.__tela_manga.mostra_mensagem("Atencao! Este capitulo nao existe!\n")
+                        try:
+                            numero_cap = self.__tela_manga.seleciona_capitulo(volume.num_capitulos)
+                            capitulo = volume.find_capitulo_by_numero(numero_cap)
+                            if capitulo != None:
+                                manga.rem_capitulo_volume(
+                                    volume.numero,
+                                    numero_cap
+                                )
+                                self.__tela_manga.mostra_mensagem("Capitulo removido!\n")
+                                break
+                            else:
+                                raise ExistenceException("capitulo", False)
+                        except ExistenceException as error:
+                            self.__tela_manga.mostra_mensagem(f"{error}")
                 else:
-                    self.__tela_manga.mostra_mensagem("Nenhum capitulo foi cadastrado neste volume\n")
+                    self.__tela_manga.mostra_mensagem("Nenhum capitulo foi cadastrado neste volume!\n")
             self.__executa_se_existe_volume_manga(manga, logica_remocao_capitulo)
         self.__executa_se_existe_manga(seleciona_manga)
 
@@ -194,26 +207,32 @@ class CtrlManga(AbstractCtrl):
         self.listar_mangas()
         if self.__mangas:
             while True:
-                titulo = self.__tela_manga.seleciona_manga()
-                manga = self.find_manga_by_titulo(titulo)
-                if manga != None:
-                    func_crud(manga)
-                    if not remove_case:
-                        self.__manga_dao.add(manga)
-                    break
-                else:
-                    self.__tela_manga.mostra_mensagem("Atencao! Este manga nao existe!\n")
+                try:
+                    titulo = self.__tela_manga.seleciona_manga()
+                    manga = self.find_manga_by_titulo(titulo)
+                    if manga != None:
+                        func_crud(manga)
+                        if not remove_case:
+                            self.__manga_dao.add(manga)
+                        break
+                    else:
+                        raise ExistenceException("manga", False)
+                except ExistenceException as error:
+                    self.__tela_manga.mostra_mensagem(f"{error}")
 
     def __executa_se_existe_volume_manga(self, manga, func_crud):
         if manga.volumes:
-            numero_vol = self.__tela_manga.seleciona_volume(manga.num_volumes)
-            volume = manga.find_volume_by_numero(numero_vol)
-            if volume != None:
-                func_crud(volume)
-            else:
-                self.__tela_manga.mostra_mensagem("Atenção! Este volume não existe!\n")
+            try:
+                numero_vol = self.__tela_manga.seleciona_volume(manga.num_volumes)
+                volume = manga.find_volume_by_numero(numero_vol)
+                if volume != None:
+                    func_crud(volume)
+                else:
+                    raise ExistenceException("volume", False)
+            except ExistenceException as error:
+                self.__tela_manga.mostra_mensagem(f"{error}")
         else:
-            self.__tela_manga.mostra_mensagem("Nenhum volume foi cadastrado neste manga\n")
+            self.__tela_manga.mostra_mensagem("Nenhum volume foi cadastrado neste manga!\n")
 
     def find_manga_by_titulo(self, titulo: str) -> Manga | None:
         if isinstance(titulo, str):
