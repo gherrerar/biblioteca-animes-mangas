@@ -5,6 +5,7 @@ from entidade.exemplarAnime import ExemplarAnime
 from entidade.exemplarManga import ExemplarManga
 from entidade.exemplar import Estado
 from entidade.dao import DAO
+from exceptions.existenceException import ExistenceException
 
 
 class CtrlUsuarioComum(AbstractCtrl):
@@ -48,15 +49,18 @@ class CtrlUsuarioComum(AbstractCtrl):
     def incluir_usuario_comum(self):
         dados_usuario = self.__tela_usuario_comum.recolhe_dados_usuario()
         usuario = self.find_usuario_by_nome(dados_usuario['nome'])
-        if usuario is not None:
-            self.__tela_usuario_comum.mostra_mensagem("Atencao! Este usuario comum ja existe!")
-        else:
-            usuario = UsuarioComum(
-                dados_usuario['nome'],
-                dados_usuario['senha']
-            )
-            self.__usuario_comum_dao.add(usuario)
-            self.__tela_usuario_comum.mostra_mensagem("Usuario cadastrado!\n")
+        try:
+            if usuario is not None:
+                raise ExistenceException("usuario comum")
+            else:
+                usuario = UsuarioComum(
+                    dados_usuario['nome'],
+                    dados_usuario['senha']
+                )
+                self.__usuario_comum_dao.add(usuario)
+                self.__tela_usuario_comum.mostra_mensagem("Usuario cadastrado!\n")
+        except ExistenceException as error:
+            self.__tela_usuario_comum.mostra_mensagem(f"{error}")
 
     def retornar_usuario_comum(self):
         self.abrir_tela()
@@ -234,15 +238,17 @@ class CtrlUsuarioComum(AbstractCtrl):
     def login_usuario(self):
         dados_usuario = self.__tela_usuario_comum.recolhe_dados_usuario()
         usuario = self.find_usuario_by_nome(dados_usuario['nome'])
-        if usuario is not None:
-            if usuario.senha != dados_usuario['senha']:
-                self.__tela_usuario_comum.mostra_mensagem("Atencao! Senha incorreta!")
+        try:
+            if usuario is not None:
+                if usuario.senha != dados_usuario['senha']:
+                    self.__tela_usuario_comum.mostra_mensagem("Atencao! Senha incorreta!")
+                else:
+                    self.__usuario_logado = usuario
+                    self.__tela_usuario_comum.mostra_mensagem(f"Bem vindo(a), {usuario.nome}!")
             else:
-                self.__usuario_logado = usuario
-                self.__tela_usuario_comum.mostra_mensagem(f"Bem vindo(a), {usuario.nome}!")
-        else:
-            self.__tela_usuario_comum.mostra_mensagem(
-                "Atencao! Este usuario comum nao existe")
+                raise ExistenceException("usuario comum", False)
+        except ExistenceException as error:
+            self.__tela_usuario_comum.mostra_mensagem(f"{error}")
 
     def logout_usuario(self):
         self.__tela_usuario_comum.mostra_mensagem(
@@ -269,10 +275,13 @@ class CtrlUsuarioComum(AbstractCtrl):
         ctrl_anime.listar_animes()
         titulo_anime = ctrl_anime.tela_anime.seleciona_anime()
         anime = ctrl_anime.find_anime_by_titulo(titulo_anime)
-        if anime != None:
-            return anime
-        else:
-            self.__tela_usuario_comum.mostra_mensagem("Atencao! Este anime nao existe!\n")
+        try:
+            if anime != None:
+                return anime
+            else:
+                raise ExistenceException("anime", False)
+        except ExistenceException as error:
+            self.__tela_usuario_comum.mostra_mensagem(f"{error}")
             self.abrir_tela_animes()
 
     def __existe_manga(self):
@@ -280,10 +289,13 @@ class CtrlUsuarioComum(AbstractCtrl):
         ctrl_manga.listar_mangas()
         titulo_manga = ctrl_manga.tela_manga.seleciona_manga()
         manga = ctrl_manga.find_manga_by_titulo(titulo_manga)
-        if manga != None:
-            return manga
-        else:
-            self.__tela_usuario_comum.mostra_mensagem("Atencao! Este manga nao existe!\n")
+        try:
+            if manga != None:
+                return manga
+            else:
+                raise ExistenceException("manga", False)
+        except ExistenceException as error:
+            self.__tela_usuario_comum.mostra_mensagem(f"{error}")
             self.abrir_tela_mangas()
 
     def __executa_se_existe_exemplar_anime(self, func_crud, create_case = False):
