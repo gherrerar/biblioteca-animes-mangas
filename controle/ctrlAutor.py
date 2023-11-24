@@ -2,6 +2,7 @@ from controle.abstractCtrl import AbstractCtrl
 from limite.telaAutor import TelaAutor
 from entidade.autor import Autor
 from entidade.dao import DAO
+from exceptions.existenceException import ExistenceException
 
 
 class CtrlAutor(AbstractCtrl):
@@ -41,12 +42,15 @@ class CtrlAutor(AbstractCtrl):
 
     def incluir_autor(self):
         nome_autor = self.__tela_autor.recolhe_dados_autor()
-        if self.find_autor_by_nome(nome_autor) != None:
-            self.__tela_autor.mostra_mensagem("Atencao! Este autor ja existe!\n")
-        else:
-            autor = Autor(nome_autor)
-            self.__autor_dao.add(autor)
-            self.__tela_autor.mostra_mensagem("Autor cadastrado!")
+        try:
+            if self.find_autor_by_nome(nome_autor) != None:
+                raise ExistenceException("autor")
+            else:
+                autor = Autor(nome_autor)
+                self.__autor_dao.add(autor)
+                self.__tela_autor.mostra_mensagem("Autor cadastrado!")
+        except ExistenceException as error:
+            self.__tela_autor.mostra_mensagem(f"{error}")
 
     def incluir_manga(self):
         if self.__autores:
@@ -68,10 +72,13 @@ class CtrlAutor(AbstractCtrl):
         self.listar_autores()
         nome_autor = self.__tela_autor.seleciona_autor()
         autor = self.find_autor_by_nome(nome_autor)
-        if autor != None:
-            return autor
-        else:
-            self.__tela_autor.mostra_mensagem("Atencao! Este autor nao existe!\n")
+        try:
+            if autor != None:
+                return autor
+            else:
+                raise ExistenceException("autor", False)
+        except ExistenceException as error:
+            self.__tela_autor.mostra_mensagem(f"{error}")
             self.abrir_tela()
     
     def __existe_manga(self):        
@@ -79,10 +86,13 @@ class CtrlAutor(AbstractCtrl):
         ctrl_manga.listar_mangas()
         titulo_manga = self.__tela_autor.seleciona_manga()
         manga = ctrl_manga.find_manga_by_titulo(titulo_manga)
-        if manga != None:
-            return manga
-        else:
-            self.__tela_autor.mostra_mensagem("Atencao! Este manga nao existe!\n")
+        try:
+            if manga != None:
+                return manga
+            else:
+                raise ExistenceException("manga", False)
+        except ExistenceException as error:
+            self.__tela_autor.mostra_mensagem(f"{error}")
             self.abrir_tela()
 
     def find_autor_by_nome(self, nome: str) -> Autor | None:
