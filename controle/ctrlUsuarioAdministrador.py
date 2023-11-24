@@ -2,6 +2,7 @@ from controle.abstractCtrl import AbstractCtrl
 from entidade.usuarioAdministrador import UsuarioAdministrador
 from limite.telaUsuarioAdministrador import TelaUsuarioAdministrador
 from entidade.dao import DAO
+from exceptions.existenceException import ExistenceException
 
 
 class CtrlUsuarioAdministrador(AbstractCtrl):
@@ -47,29 +48,33 @@ class CtrlUsuarioAdministrador(AbstractCtrl):
     def incluir_usuario(self):
         dados_usuario = self.__tela_usuario_admin.recolhe_dados_usuario()
         usuario = self.find_usuario_by_nome(dados_usuario['nome'])
-        if usuario != None:
-            self.__tela_usuario_admin.mostra_mensagem(
-                "Atenção! Este usuário administrador já existe")
-        else:
-            usuario = UsuarioAdministrador(
-                dados_usuario['nome'],
-                dados_usuario['senha']
-            )
-            self.__usuario_admin_dao.add(usuario)
-            self.__tela_usuario_admin.mostra_mensagem("Usuário cadastrado!\n")
+        try:
+            if usuario != None:
+                raise ExistenceException("usuario administrador")
+            else:
+                usuario = UsuarioAdministrador(
+                    dados_usuario['nome'],
+                    dados_usuario['senha']
+                )
+                self.__usuario_admin_dao.add(usuario)
+                self.__tela_usuario_admin.mostra_mensagem("Usuário cadastrado!\n")
+        except ExistenceException as error:
+            self.__tela_usuario_admin.mostra_mensagem(f"{error}")
 
     def login_usuario(self):
         dados_usuario = self.__tela_usuario_admin.recolhe_dados_usuario()
         usuario = self.find_usuario_by_nome(dados_usuario['nome'])
-        if usuario != None:
-            if usuario.senha != dados_usuario['senha']:
-                self.__tela_usuario_admin.mostra_mensagem("Atencao! Senha incorreta!")
+        try:
+            if usuario != None:
+                if usuario.senha != dados_usuario['senha']:
+                    self.__tela_usuario_admin.mostra_mensagem("Atencao! Senha incorreta!")
+                else:
+                    self.__usuario_logado = usuario
+                    self.__tela_usuario_admin.mostra_mensagem(f"Bem vindo(a), {usuario.nome}!")
             else:
-                self.__usuario_logado = usuario
-                self.__tela_usuario_admin.mostra_mensagem(f"Bem vindo(a), {usuario.nome}!")
-        else:
-            self.__tela_usuario_admin.mostra_mensagem(
-                "Atencao! Este usuario administrador nao existe")
+                raise ExistenceException("usuario administrador", False)
+        except ExistenceException as error:
+            self.__tela_usuario_admin.mostra_mensagem(f"{error}")
 
     def logout_usuario(self):
         self.__tela_usuario_admin.mostra_mensagem(
