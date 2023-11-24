@@ -70,12 +70,12 @@ class CtrlManga(AbstractCtrl):
     def incluir_manga(self):
         self.ctrl_principal.ctrl_genero.listar_generos()
         dados_manga = self.__tela_manga.recolhe_dados_manga()
-        self.__cria_genero(dados_manga)
 
         try:
             if self.find_manga_by_titulo(dados_manga['titulo']) != None:
                 raise ExistenceException("manga")
             else:
+                self.__cria_genero(dados_manga)
                 manga = Manga(
                     dados_manga['titulo'],
                     dados_manga['ano'],
@@ -125,20 +125,24 @@ class CtrlManga(AbstractCtrl):
 
     def incluir_volume_manga(self):
         def logica_inclusao_volume(manga):
-            while True:
-                try:
-                    dados_volume = self.__tela_manga.recolhe_dados_volume(manga.num_volumes)
-                    volume = manga.add_volume(
-                        dados_volume['numero'],
-                        dados_volume['num_capitulos']
-                    )
-                    if volume != None:
-                        self.__tela_manga.mostra_mensagem("Volume inserido!\n")
-                        break
-                    else:
-                        raise ExistenceException("volume")
-                except ExistenceException as error:
-                    self.__tela_manga.mostra_mensagem(f"{error}")
+            if abs(len(manga.volumes)-manga.num_volumes) != 0:
+                while True:
+                    try:
+                        dados_volume = self.__tela_manga.recolhe_dados_volume(manga.num_volumes)
+                        volume = manga.add_volume(
+                            dados_volume['numero'],
+                            dados_volume['num_capitulos']
+                        )
+                        if volume != None:
+                            self.__tela_manga.mostra_mensagem("Volume inserido!\n")
+                            break
+                        else:
+                            raise ExistenceException("volume")
+                    except ExistenceException as error:
+                        self.__tela_manga.mostra_mensagem(f"{error}")
+            else:
+                self.__tela_manga.mostra_mensagem(
+                    "Nao ha volumes para incluir neste manga!\n")
         self.__executa_se_existe_manga(logica_inclusao_volume)
 
     def remover_volume_manga(self):
