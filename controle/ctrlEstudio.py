@@ -2,6 +2,7 @@ from controle.abstractCtrl import AbstractCtrl
 from limite.telaEstudio import TelaEstudio
 from entidade.estudio import Estudio
 from entidade.dao import DAO
+from exceptions.existenceException import ExistenceException
 
 
 class CtrlEstudio(AbstractCtrl):
@@ -41,12 +42,15 @@ class CtrlEstudio(AbstractCtrl):
 
     def incluir_estudio(self):
         nome_estudio = self.__tela_estudio.recolhe_dados_estudio()
-        if self.find_estudio_by_nome(nome_estudio) != None:
-            self.__tela_estudio.mostra_mensagem("Atencao! Este estudio ja existe!\n")
-        else:
-            estudio = Estudio(nome_estudio)
-            self.__estudio_dao.add(estudio)
-            self.__tela_estudio.mostra_mensagem("Estudio cadastrado!")
+        try:
+            if self.find_estudio_by_nome(nome_estudio) != None:
+                raise ExistenceException("estudio")
+            else:
+                estudio = Estudio(nome_estudio)
+                self.__estudio_dao.add(estudio)
+                self.__tela_estudio.mostra_mensagem("Estudio cadastrado!")
+        except ExistenceException as error:
+            self.__tela_estudio.mostra_mensagem(f"{error}")
 
     def incluir_anime(self):
         if self.__estudios:
@@ -68,10 +72,13 @@ class CtrlEstudio(AbstractCtrl):
         self.listar_estudios()
         nome_estudio = self.__tela_estudio.seleciona_estudio()
         estudio = self.find_estudio_by_nome(nome_estudio)
-        if estudio != None:
-            return estudio
-        else:
-            self.__tela_estudio.mostra_mensagem("Atencao! Este estudio nao existe!\n")
+        try:
+            if estudio != None:
+                return estudio
+            else:
+                raise ExistenceException("estudio", False)
+        except ExistenceException as error:
+            self.__tela_estudio.mostra_mensagem(f"{error}")
             self.abrir_tela()
 
     def __existe_anime(self):
@@ -79,10 +86,13 @@ class CtrlEstudio(AbstractCtrl):
         ctrl_anime.listar_animes()
         titulo_anime = self.__tela_estudio.seleciona_anime()
         anime = ctrl_anime.find_anime_by_titulo(titulo_anime)
-        if anime != None:
-            return anime
-        else:
-            self.__tela_estudio.mostra_mensagem("Atencao! Este anime nao existe!\n")
+        try:
+            if anime != None:
+                return anime
+            else:
+                raise ExistenceException("anime", False)
+        except ExistenceException as error:
+            self.__tela_estudio.mostra_mensagem(f"{error}")
             self.abrir_tela()
 
     def find_estudio_by_nome(self, nome: str) -> Estudio | None:
