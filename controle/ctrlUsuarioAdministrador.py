@@ -22,11 +22,11 @@ class CtrlUsuarioAdministrador(AbstractCtrl):
 
         while True:
             if self.__usuario_logado:
-                opcoes[4] = self.logout_usuario
-                opcoes[5] = self.abrir_tela_animes
-                opcoes[6] = self.abrir_tela_mangas
+                opcoes[3] = self.logout_usuario
+                opcoes[4] = self.abrir_tela_animes
+                opcoes[5] = self.abrir_tela_mangas
             opcoes[self.__tela_usuario_admin.mostra_opcoes(
-                self.__usuario_logado)]()
+                self.__usuario_logado, self.__usuarios)]()
 
     def abrir_tela_animes(self):
         self.ctrl_principal.ctrl_anime.abrir_tela()
@@ -47,7 +47,10 @@ class CtrlUsuarioAdministrador(AbstractCtrl):
 
     def incluir_usuario(self):
         dados_usuario = self.__tela_usuario_admin.recolhe_dados_usuario()
-        usuario = self.find_usuario_by_nome(dados_usuario['nome'])
+        if dados_usuario:
+            usuario = self.find_usuario_by_nome(dados_usuario['nome'])
+        else:
+            self.abrir_tela()
         try:
             if usuario != None:
                 raise ExistenceException("usuario administrador")
