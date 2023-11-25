@@ -59,5 +59,4 @@ class CtrlPrincipal:
         self.__ctrl_usuario_comum.abrir_tela()
 
     def encerrar_sistema(self):
-        self.__tela_principal.mostra_mensagem("\nEncerrando o sistema...")
         exit(0)
