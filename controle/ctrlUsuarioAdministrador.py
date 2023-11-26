@@ -14,17 +14,18 @@ class CtrlUsuarioAdministrador(AbstractCtrl):
 
     def abrir_tela(self):
         opcoes = {
-            1: self.listar_usuarios,
-            2: self.incluir_usuario,
-            3: self.login_usuario,
+            1: self.incluir_usuario,
+            2: self.login_usuario,
             0: self.retornar
         }
 
         while True:
             if self.__usuario_logado:
-                opcoes[3] = self.logout_usuario
-                opcoes[4] = self.abrir_tela_animes
-                opcoes[5] = self.abrir_tela_mangas
+                opcoes[2] = self.logout_usuario
+                opcoes[3] = self.abrir_tela_animes
+                opcoes[4] = self.abrir_tela_mangas
+            else:
+                opcoes[2] = self.login_usuario
             opcoes[self.__tela_usuario_admin.mostra_opcoes(
                 self.__usuario_logado, self.__usuarios)]()
 
@@ -37,13 +38,6 @@ class CtrlUsuarioAdministrador(AbstractCtrl):
     @property
     def __usuarios(self):
         return self.__usuario_admin_dao.get_all()
-
-    def listar_usuarios(self):
-        if self.__usuarios:
-            for usuario in self.__usuarios:
-                self.__tela_usuario_admin.mostra_usuario(usuario.nome)
-        else:
-            self.__tela_usuario_admin.mostra_usuario(None)
 
     def incluir_usuario(self):
         dados_usuario = self.__tela_usuario_admin.recolhe_dados_usuario()
@@ -66,7 +60,10 @@ class CtrlUsuarioAdministrador(AbstractCtrl):
 
     def login_usuario(self):
         dados_usuario = self.__tela_usuario_admin.recolhe_dados_usuario()
-        usuario = self.find_usuario_by_nome(dados_usuario['nome'])
+        if dados_usuario:
+            usuario = self.find_usuario_by_nome(dados_usuario['nome'])
+        else:
+            self.abrir_tela()
         try:
             if usuario != None:
                 if usuario.senha != dados_usuario['senha']:

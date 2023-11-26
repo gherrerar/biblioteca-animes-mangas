@@ -13,30 +13,48 @@ class CtrlAnime(AbstractCtrl):
 
     def abrir_tela(self):
         opcoes = {
-            1: self.listar_animes,
+            1: self.exibir_anime,
             2: self.incluir_anime,
             3: self.editar_anime,
             4: self.remover_anime,
-            5: self.abrir_tela_temporada,
-            6: self.abrir_tela_estudio,
+            5: self.abrir_tela_estudio,
             0: self.retornar
         }
 
         while True:
-            opcoes[self.__tela_anime.mostra_opcoes()]()
+            op, self.__selecionado_ani = self.__tela_anime.mostra_opcoes(
+                self.__animes, 'anime')
+            opcoes[op]()
 
     def abrir_tela_temporada(self):
         opcoes = {
-            1: self.listar_temporadas_anime,
+            1: self.exibir_temporada_anime,
             2: self.incluir_temporada_anime,
             3: self.remover_temporada_anime,
-            4: self.incluir_episodios_temporada,
-            5: self.remover_episodio_temporada,
+            4: self.abrir_tela_episodio,
             0: self.abrir_tela
         }
 
         while True:
-            opcoes[self.__tela_anime.mostra_opcoes_temporada()]()
+            op, self.__selecionado_temp = self.__tela_anime.mostra_opcoes(
+                self.__selecionado_ani.temporadas if self.__selecionado_ani else [], 'temporada')
+            opcoes[op]()
+
+    def abrir_tela_episodio(self):
+        if self.__selecionado_temp != None:
+            opcoes = {
+                1: self.exibir_episodio_temporada,
+                2: self.incluir_episodios_temporada,
+                3: self.remover_episodio_temporada,
+                0: self.abrir_tela_temporada
+            }
+
+            while True:
+                op, self.__selecionado_ep = self.__tela_anime.mostra_opcoes(
+                    self.__selecionado_temp.episodios if self.__selecionado_temp else [], 'episodio')
+                opcoes[op]()
+        else:
+            self.__tela_anime.mostra_mensagem("Nenhuma temporada foi selecionada")
 
     def abrir_tela_estudio(self):
         self.ctrl_principal.ctrl_estudio.abrir_tela()
@@ -53,24 +71,24 @@ class CtrlAnime(AbstractCtrl):
     def tela_anime(self):
         return self.__tela_anime
 
-    def listar_animes(self):
-        if self.__animes:
-            for ani in self.__animes:
-                self.__tela_anime.mostra_anime({
-                    'titulo': ani.titulo,
-                    'ano': ani.ano_lancamento,
-                    'genero': ani.genero,
-                    'estudio': ani.estudio,
-                    'num_temporadas': ani.num_temporadas,
-                    'temporadas': ani.temporadas
-                })
+    def exibir_anime(self):
+        if self.__selecionado_ani:
+            self.__tela_anime.mostra_anime({
+                'titulo': self.__selecionado_ani.titulo,
+                'ano': self.__selecionado_ani.ano_lancamento,
+                'genero': self.__selecionado_ani.genero,
+                'estudio': self.__selecionado_ani.estudio,
+                'num_temporadas': self.__selecionado_ani.num_temporadas,
+                'temporadas': self.__selecionado_ani.temporadas
+            })
         else:
             self.__tela_anime.mostra_anime(None)
 
     def incluir_anime(self):
         self.ctrl_principal.ctrl_genero.listar_generos()
         dados_anime = self.__tela_anime.recolhe_dados_anime()
-
+        if dados_anime == 'CANC':
+            self.abrir_tela()
         try:
             if self.find_anime_by_titulo(dados_anime['titulo']) != None:
                 raise ExistenceException("anime")
@@ -89,7 +107,11 @@ class CtrlAnime(AbstractCtrl):
 
     def editar_anime(self):
         def logica_edicao(anime):
-            dados_anime = self.__tela_anime.recolhe_dados_anime()
+            dados_anime = self.__tela_anime.recolhe_dados_anime(anime)
+            if dados_anime == 'CANC':
+                self.abrir_tela()
+            elif dados_anime == 'TEMP':
+                self.abrir_tela_temporada()
             self.__cria_genero(dados_anime)
             
             anime.titulo = dados_anime['titulo']
@@ -110,18 +132,15 @@ class CtrlAnime(AbstractCtrl):
             self.__tela_anime.mostra_mensagem("Anime removido!\n")
         self.__executa_se_existe_anime(logica_remocao, True)
 
-    def listar_temporadas_anime(self):
-        def logica_lista_temporada(anime):
-            if anime.temporadas:
-                for temp in anime.temporadas:
-                    self.__tela_anime.mostra_temporada({
-                        'numero': temp.numero,
-                        'num_episodios': temp.num_episodios,
-                        'episodios': temp.episodios
-                    })
-            else:
-                self.__tela_anime.mostra_temporada({})
-        self.__executa_se_existe_anime(logica_lista_temporada)
+    def exibir_temporada_anime(self):
+        if self.__selecionado_temp:
+            self.__tela_anime.mostra_temporada({
+                'numero': self.__selecionado_temp.numero,
+                'num_episodios': self.__selecionado_temp.num_episodios,
+                'episodios': self.__selecionado_temp.episodios
+            })
+        else:
+            self.__tela_anime.mostra_temporada(None)
 
     def incluir_temporada_anime(self):
         def logica_inclusao_temporada(anime):
@@ -129,6 +148,8 @@ class CtrlAnime(AbstractCtrl):
                 while True:
                     try:
                         dados_temporada = self.__tela_anime.recolhe_dados_temporada(anime.num_temporadas)
+                        if dados_temporada == 'CANC':
+                            self.abrir_tela_temporada()
                         temporada = anime.add_temporada(
                             dados_temporada['numero'],
                             dados_temporada['num_episodios']
@@ -153,21 +174,33 @@ class CtrlAnime(AbstractCtrl):
             self.__executa_se_existe_temporada_anime(anime, logica_remocao_temporada)
         self.__executa_se_existe_anime(seleciona_anime)
 
+    def exibir_episodio_temporada(self):
+        if self.__selecionado_ep:
+            self.__tela_anime.mostra_episodio({
+                'numero': self.__selecionado_ep.numero,
+                'duracao': self.__selecionado_ep.duracao
+            })
+        else:
+            self.__tela_anime.mostra_episodio(None)
+
     def incluir_episodios_temporada(self):
         def seleciona_anime(anime):
             def logica_inclusao_episodios(temporada):
                 for _ in range(abs(len(temporada.episodios)-temporada.num_episodios)):
                     while True:
                         try:
-                            dados_episodios = self.__tela_anime.recolhe_dados_episodio(temporada.num_episodios)
-                            episodio = temporada.find_episodio_by_numero(dados_episodios['numero'])
+                            dados_episodio = self.__tela_anime.recolhe_dados_episodio(temporada.num_episodios)
+                            if dados_episodio == 'CANC':
+                                self.abrir_tela_episodio()
+                            episodio = temporada.find_episodio_by_numero(
+                                dados_episodio['numero'])
                             if episodio != None:
                                 raise ExistenceException("episodio")
                             else:
                                 anime.add_episodio_temporada(
                                     temporada.numero,
-                                    dados_episodios['numero'],
-                                    dados_episodios['duracao']
+                                    dados_episodio['numero'],
+                                    dados_episodio['duracao']
                                 )
                                 self.__tela_anime.mostra_mensagem("Episódio inserido!\n")
                                 break
@@ -183,12 +216,11 @@ class CtrlAnime(AbstractCtrl):
                 if temporada.episodios:
                     while True:
                         try:
-                            numero_ep = self.__tela_anime.seleciona_episodio(temporada.num_episodios)
-                            episodio = temporada.find_episodio_by_numero(numero_ep)
+                            episodio = self.__selecionado_ep
                             if episodio != None:
                                 anime.rem_episodio_temporada(
                                     temporada.numero,
-                                    numero_ep
+                                    episodio.numero
                                 )
                                 self.__tela_anime.mostra_mensagem("Episódio removido!\n")
                                 break
@@ -208,27 +240,22 @@ class CtrlAnime(AbstractCtrl):
         dados_anime['genero'] = ctrl_genero.find_genero_by_nome(nome_genero)
 
     def __executa_se_existe_anime(self, func_crud, remove_case = False):
-        self.listar_animes()
         if self.__animes:
-            while True:
-                try:
-                    titulo = self.__tela_anime.seleciona_anime()
-                    anime = self.find_anime_by_titulo(titulo)
-                    if anime != None:
-                        func_crud(anime)
-                        if not remove_case:
-                            self.__anime_dao.add(anime)
-                        break
-                    else:
-                        raise ExistenceException("anime", False)
-                except ExistenceException as error:
-                    self.__tela_anime.mostra_mensagem(f"{error}")
+            try:
+                anime = self.__selecionado_ani
+                if anime != None:
+                    func_crud(anime)
+                    if not remove_case:
+                        self.__anime_dao.add(anime)
+                else:
+                    raise ExistenceException("anime", False)
+            except ExistenceException as error:
+                self.__tela_anime.mostra_mensagem(f"{error}")
 
     def __executa_se_existe_temporada_anime(self, anime, func_crud):
         if anime.temporadas:
             try:
-                numero_temp = self.__tela_anime.seleciona_temporada(anime.num_temporadas)
-                temporada = anime.find_temporada_by_numero(numero_temp)
+                temporada = self.__selecionado_temp
                 if temporada != None:
                     func_crud(temporada)
                 else:

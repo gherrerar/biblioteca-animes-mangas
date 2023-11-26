@@ -26,3 +26,6 @@ class Episodio:
     def duracao(self, duracao: int):
         if isinstance(duracao, int):
             self.__duracao = duracao
+
+    def __repr__(self) -> str:
+        return f"{self.numero}"

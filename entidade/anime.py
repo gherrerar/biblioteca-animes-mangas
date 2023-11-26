@@ -67,3 +67,6 @@ class Anime(Obra):
 
     def total_episodios(self) -> int:
         return sum([temp.num_episodios for temp in self.__temporadas])
+
+    def __repr__(self) -> str:
+        return f"{self.titulo}"

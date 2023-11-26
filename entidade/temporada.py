@@ -50,3 +50,6 @@ class Temporada:
                 if ep.numero == numero_ep:
                     return ep
             return None
+
+    def __repr__(self) -> str:
+        return f"{self.numero}"

@@ -29,8 +29,8 @@ class AbstractTela(ABC):
             # if nums_validos:
             #     self.mostra_mensagem(">>> Valores válidos: ", *nums_validos)
         except OutOfRangeException as error:
-            self.mostra_mensagem("Valor incorreto! Digite um número inteiro valido")
-            self.mostra_mensagem(f"{error}")
+            self.mostra_mensagem(
+                f"{titulo}:\nValor incorreto! Digite um número inteiro valido\n{error}")
         except KeyboardInterrupt:
             self.mostra_mensagem("Encerrando o sistema...")
             exit(0)
@@ -54,4 +54,4 @@ class AbstractTela(ABC):
             self.mostra_mensagem("Ocorreu um erro")
 
     def mostra_mensagem(self, *msg: str):
-        sg.Popup(*msg, button_color='white')
+        sg.Popup(*msg, button_color='white', title='Atenção!')

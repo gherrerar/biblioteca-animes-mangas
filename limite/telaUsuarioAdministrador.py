@@ -6,30 +6,32 @@ class TelaUsuarioAdministrador(AbstractTela):
     def __init__(self):
         pass
 
-    def init_components(self, usuario_logado, usuarios):
+    def init_components(self, usuario_logado, usuario_list):
         self.__window = sg.Window('Biblioteca de Animes e Mangas', [
-            [sg.B(image_filename="limite/assets/images/login_btn.png", p=(0, 15), expand_x=True,
-                  key=3) if not usuario_logado else sg.B(image_filename="limite/assets/images/logout_btn.png", key=3)],
+            [sg.B(image_filename="limite/assets/images/login_btn.png",
+                  p=(0, 15), expand_x=True,
+                  key=2) if not usuario_logado else (
+                        sg.B(image_filename="limite/assets/images/logout_btn.png",
+                            p=(0, 15), expand_x=True, key=2))],
             [sg.Listbox(
-                usuarios,
+                usuario_list,
                 s=(None, 10), select_mode=sg.LISTBOX_SELECT_MODE_SINGLE,
                 background_color='#525255', highlight_background_color='white',
                 highlight_text_color='black', sbar_relief=sg.RELIEF_FLAT,
                 sbar_background_color='#cbcbcc', font=12,
                 expand_x=True, key='-LB-')],
             [sg.B(image_filename="limite/assets/images/add_btn.png",
-                  p=(0, 10), expand_x=True, key=2)],
+                  p=(0, 10), expand_x=True, key=1)],
 
             ([sg.T('_'*49, text_color='#525255',
                    justification='center', expand_x=True)],
-             [sg.B(image_filename="limite/assets/images/manga_btn.png", p=(5, 10), key=5),
-             sg.B(image_filename="limite/assets/images/anime_btn.png", p=(5, 10), key=4)]) if usuario_logado else []
+             [sg.B(image_filename="limite/assets/images/manga_btn.png", p=(5, 10), key=4),
+             sg.B(image_filename="limite/assets/images/anime_btn.png", p=(5, 10), key=3)]) if usuario_logado else []
         ], grab_anywhere=True)
 
     def mostra_opcoes(self, usuario_logado, usuarios) -> int:
-        self.init_components(usuario_logado, usuarios)
+        self.init_components(usuario_logado, list(usuarios))
         event, values = self.open()
-        # print(event, values)
         self.close()
 
         return event if event is not None else 0
@@ -57,7 +59,7 @@ class TelaUsuarioAdministrador(AbstractTela):
             if event == 'Confirmar':
                 nome = super().le_texto('Nome', values['nome'])
                 senha = super().le_texto('Senha', values['senha'])
-            if event == 'Cancelar' or nome and senha:
+            if event == 'Cancelar' or all([nome, senha]):
                 break
         self.close()
         return {'nome': nome, 'senha': senha} if event != 'Cancelar' else {}
