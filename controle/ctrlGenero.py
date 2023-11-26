@@ -14,26 +14,15 @@ class CtrlGenero(AbstractCtrl):
     def generos(self):
         return self.__generos
 
-    def abrir_tela(self):
-        opcoes = {
-            1: self.listar_generos,
-            2: self.incluir_genero,
-            0: self.retornar
-        }
-
-        while True:
-            opcoes[self.__tela_genero.mostra_opcoes()]()
-
     @property
     def __generos(self):
         return self.__genero_dao.get_all()
 
     def listar_generos(self):
         if self.__generos:
-            for gen in self.__generos:
-                self.__tela_genero.mostra_genero(gen.nome)
+            self.__tela_genero.mostra_generos(self.__generos)
         else:
-            self.__tela_genero.mostra_genero(None)
+            self.__tela_genero.mostra_generos(None)
 
     def incluir_genero(self, nome: str = ''):
         nome_genero = nome or self.__tela_genero.recolhe_dados_genero()
