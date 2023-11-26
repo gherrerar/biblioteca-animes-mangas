@@ -46,7 +46,7 @@ class TelaManga(AbstractTela):
 
     def mostra_manga(self, dados_manga: {}):
         if not dados_manga:
-            self.mostra_mensagem("Nenhum manga foi cadastrado!")
+            self.mostra_mensagem("Nenhum manga foi selecionado!")
         else:
             self.__window = sg.Window('Biblioteca de Animes e Mangas', [
                 [sg.Col([
@@ -147,7 +147,7 @@ class TelaManga(AbstractTela):
 
     def mostra_volume(self, dados_volume: {}):
         if not dados_volume:
-            self.mostra_mensagem("Nenhum volume cadastrado neste manga")
+            self.mostra_mensagem("Nenhum volume foi selecionado!")
         else:
             self.__window = sg.Window('Biblioteca de Animes e Mangas', [
                 [sg.Col([
@@ -219,7 +219,7 @@ class TelaManga(AbstractTela):
 
     def mostra_capitulo(self, dados_capitulo: {}):
         if not dados_capitulo:
-            self.mostra_mensagem("Nenhum capítulo foi selecionado")
+            self.mostra_mensagem("Nenhum capítulo foi selecionado!")
         else:
             self.__window = sg.Window('Biblioteca de Animes e Mangas', [
                 [sg.Col([

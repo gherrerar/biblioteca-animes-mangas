@@ -25,3 +25,6 @@ class Autor:
         if isinstance(manga, Manga) and manga not in self.__mangas_produzidos:
             manga.config_autor(self)
             self.__mangas_produzidos.append(manga)
+
+    def __repr__(self) -> str:
+        return f"{self.nome}"

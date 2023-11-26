@@ -68,6 +68,10 @@ class CtrlManga(AbstractCtrl):
         return self.__manga_dao.get_all()
 
     @property
+    def mangas(self):
+        return self.__mangas
+
+    @property
     def tela_manga(self):
         return self.__tela_manga
 
