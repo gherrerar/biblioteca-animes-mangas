@@ -26,3 +26,6 @@ class Capitulo:
     def num_paginas(self, num_paginas: int):
         if isinstance(num_paginas, int):
             self.__num_paginas = num_paginas
+
+    def __repr__(self) -> int:
+        return f"{self.numero}"

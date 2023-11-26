@@ -50,3 +50,6 @@ class Volume:
                 if cap.numero == numero_cap:
                     return cap
             return None
+
+    def __repr__(self) -> int:
+        return f"{self.numero}"

@@ -67,3 +67,6 @@ class Manga(Obra):
 
     def total_capitulos(self) -> int:
         return sum([vol.num_capitulos for vol in self.__volumes])
+
+    def __repr__(self) -> str:
+        return f"{self.titulo}"
