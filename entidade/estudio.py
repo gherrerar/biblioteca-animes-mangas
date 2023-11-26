@@ -25,3 +25,6 @@ class Estudio:
         if isinstance(anime, Anime) and anime not in self.__animes_produzidos:
             anime.config_estudio(self)
             self.__animes_produzidos.append(anime)
+
+    def __repr__(self) -> str:
+        return f"{self.nome}"

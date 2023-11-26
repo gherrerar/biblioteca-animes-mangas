@@ -68,6 +68,10 @@ class CtrlAnime(AbstractCtrl):
         return self.__anime_dao.get_all()
 
     @property
+    def animes(self):
+        return self.__animes
+
+    @property
     def tela_anime(self):
         return self.__tela_anime
 

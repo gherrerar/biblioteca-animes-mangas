@@ -14,7 +14,6 @@ class TelaAnime(AbstractTela):
         }
         methods[type](list(objs))
         event, values = self.open()
-        print(event, values)
         self.close()
 
         selecionado = values['-LB-']
@@ -47,7 +46,7 @@ class TelaAnime(AbstractTela):
 
     def mostra_anime(self, dados_animes: {}):
         if not dados_animes:
-            self.mostra_mensagem("Nenhum anime foi selecionado")
+            self.mostra_mensagem("Nenhum anime foi selecionado!")
         else:
             self.__window = sg.Window('Biblioteca de Animes e Mangas', [
                 [sg.Col([
@@ -148,7 +147,7 @@ class TelaAnime(AbstractTela):
 
     def mostra_temporada(self, dados_temporada: {}):
         if not dados_temporada:
-            self.mostra_mensagem("Nenhuma temporada foi selecionada")
+            self.mostra_mensagem("Nenhuma temporada foi selecionada!")
         else:
             self.__window = sg.Window('Biblioteca de Animes e Mangas', [
                 [sg.Col([
@@ -220,7 +219,7 @@ class TelaAnime(AbstractTela):
 
     def mostra_episodio(self, dados_episodio: {}):
         if not dados_episodio:
-            self.mostra_mensagem("Nenhum episódio foi selecionado")
+            self.mostra_mensagem("Nenhum episodio foi selecionado!")
         else:
             self.__window = sg.Window('Biblioteca de Animes e Mangas', [
                 [sg.Col([
