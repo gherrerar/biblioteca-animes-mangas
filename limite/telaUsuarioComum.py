@@ -21,6 +21,8 @@ class TelaUsuarioComum(AbstractTela):
 
     def init_components(self, usuario_logado, usuario_list):
         self.__window = sg.Window('Biblioteca de Animes e Mangas', [
+            [sg.B(image_filename="limite/assets/images/back_btn.png",
+                  p=(0, 15), key=0)],
             [sg.B(image_filename="limite/assets/images/login_btn.png",
                   p=(0, 15), expand_x=True,
                   key=2) if not usuario_logado else (
@@ -65,13 +67,15 @@ class TelaUsuarioComum(AbstractTela):
             if event == 'Confirmar':
                 nome = super().le_texto('Nome', values['nome'])
                 senha = super().le_texto('Senha', values['senha'])
-            if event == 'Cancelar' or all([nome, senha]):
+            if event in ('Cancelar', None) or all([nome, senha]):
                 break
         self.close()
-        return {'nome': nome, 'senha': senha} if event != 'Cancelar' else {}
+        return {'nome': nome, 'senha': senha} if event not in ('Cancelar', None) else {}
 
     def init_components_anime(self, usuario_logado, anime_list):
         self.__window = sg.Window('Biblioteca de Animes e Mangas', [
+            [sg.B(image_filename="limite/assets/images/back_btn.png",
+                  p=(0, 15), key=0)],
             [sg.T('ANIMES', justification='center', expand_x=True)],
             [sg.Listbox(
                 anime_list,
@@ -132,7 +136,7 @@ class TelaUsuarioComum(AbstractTela):
                 if selecionado is not None:
                     estado = values['etiqueta'] if values['etiqueta'] else None
                 break
-            elif event == 'Cancelar':
+            elif event in ('Cancelar', None):
                 self.close()
                 return 'CANC'
         self.close()
@@ -167,6 +171,8 @@ class TelaUsuarioComum(AbstractTela):
 
     def init_components_manga(self, usuario_logado, manga_list):
         self.__window = sg.Window('Biblioteca de Animes e Mangas', [
+            [sg.B(image_filename="limite/assets/images/back_btn.png",
+                  p=(0, 15), key=0)],
             [sg.T('MANGAS', justification='center', expand_x=True)],
             [sg.Listbox(
                 manga_list,
@@ -227,7 +233,7 @@ class TelaUsuarioComum(AbstractTela):
                 if selecionado is not None:
                     estado = values['etiqueta'] if values['etiqueta'] else None
                 break
-            elif event == 'Cancelar':
+            elif event in ('Cancelar', None):
                 self.close()
                 return 'CANC'
         self.close()

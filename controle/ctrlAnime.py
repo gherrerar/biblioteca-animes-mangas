@@ -255,6 +255,9 @@ class CtrlAnime(AbstractCtrl):
                     raise ExistenceException("anime", False)
             except ExistenceException as error:
                 self.__tela_anime.mostra_mensagem(f"{error}")
+        else:
+            self.__tela_anime.mostra_mensagem(
+                "Nenhum anime foi cadastrado!\n")
 
     def __executa_se_existe_temporada_anime(self, anime, func_crud):
         if anime.temporadas:

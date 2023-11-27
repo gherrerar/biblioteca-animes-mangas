@@ -19,11 +19,13 @@ class TelaManga(AbstractTela):
         selecionado = values['-LB-']
         return event if event is not None else 0, selecionado[0] if selecionado else None
 
-    def init_components(self, anime_list):
+    def init_components(self, manga_list):
         self.__window = sg.Window('Biblioteca de Animes e Mangas', [
+            [sg.B(image_filename="limite/assets/images/back_btn.png",
+                  p=(0, 15), key=0)],
             [sg.T('MANGAS', justification='center', expand_x=True)],
             [sg.Listbox(
-                anime_list,
+                manga_list,
                 s=(None, 10),
                 background_color='#525255', highlight_background_color='white',
                 highlight_text_color='black', sbar_relief=sg.RELIEF_FLAT,
@@ -113,7 +115,7 @@ class TelaManga(AbstractTela):
                 genero = super().le_texto("Gênero", values['genero'])
                 num_volumes = super().le_num_inteiro(
                     "Nº Volumes", values['num_volumes'], minimo=1)
-            elif event == 'Cancelar':
+            elif event in ('Cancelar', None):
                 self.close()
                 return 'CANC'
             elif event == 'Volume':
@@ -126,6 +128,8 @@ class TelaManga(AbstractTela):
 
     def init_components_volume(self, volume_list):
         self.__window = sg.Window('Biblioteca de Animes e Mangas', [
+            [sg.B(image_filename="limite/assets/images/back_btn.png",
+                  p=(0, 15), key=0)],
             [sg.T('VOLUMES MANGA', justification='center', expand_x=True)],
             [sg.Listbox(
                 volume_list,
@@ -190,7 +194,7 @@ class TelaManga(AbstractTela):
                     "Número", values['numero'], minimo=1, maximo=n_vols)
                 num_capitulos = super().le_num_inteiro(
                     "Nº Capítulos", values['num_capitulos'], minimo=1)
-            elif event == 'Cancelar':
+            elif event in ('Cancelar', None):
                 self.close()
                 return 'CANC'
             if all([numero, num_capitulos]):
@@ -200,6 +204,8 @@ class TelaManga(AbstractTela):
 
     def init_components_capitulo(self, capitulo_list):
         self.__window = sg.Window('Biblioteca de Animes e Mangas', [
+            [sg.B(image_filename="limite/assets/images/back_btn.png",
+                  p=(0, 15), key=0)],
             [sg.T('CAPITULOS VOLUME MANGA', justification='center', expand_x=True)],
             [sg.Listbox(
                 capitulo_list,
@@ -224,7 +230,7 @@ class TelaManga(AbstractTela):
             self.__window = sg.Window('Biblioteca de Animes e Mangas', [
                 [sg.Col([
                     [sg.T('NUMERO:')],
-                    [sg.T('N° DE PAGINAS:')]
+                    [sg.T('Nº PAGINAS:')]
                 ]),
                 sg.Col([
                     [sg.T(dados_capitulo['numero'])],
@@ -239,7 +245,7 @@ class TelaManga(AbstractTela):
                 [sg.In(key='numero', p=(5, 10), s=(
                            37, None), font=12, focus=True)]
             ], expand_x=True)],
-            [sg.Fr("N° de Páginas", [
+            [sg.Fr("Nº Páginas", [
                 [sg.In(key='num_paginas', p=(5, 10), s=(37, None), font=12)]
             ], expand_x=True)],
             [
@@ -258,7 +264,7 @@ class TelaManga(AbstractTela):
                     "Número", values['numero'], minimo=1, maximo=n_caps)
                 num_paginas = super().le_num_inteiro(
                     "Duração (min)", values['num_paginas'], minimo=5)
-            elif event == 'Cancelar':
+            elif event in ('Cancelar', None):
                 self.close()
                 return 'CANC'
             if all([numero, num_paginas]):

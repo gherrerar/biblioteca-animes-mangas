@@ -8,6 +8,8 @@ class TelaEstudio(AbstractTela):
 
     def init_components(self, estudio_list):
         self.__window = sg.Window('Biblioteca de Animes e Mangas', [
+            [sg.B(image_filename="limite/assets/images/back_btn.png",
+                  p=(0, 15), key=0)],
             [sg.T('ESTUDIOS', justification='center', expand_x=True)],
             [sg.Listbox(
                 estudio_list,
@@ -84,7 +86,7 @@ class TelaEstudio(AbstractTela):
                 else:
                     attr = values['-LB-']
                     break
-            elif event == 'Cancelar':
+            elif event in ('Cancelar', None):
                 self.close()
                 return 'CANC'
             if attr:

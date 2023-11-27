@@ -143,6 +143,8 @@ class CtrlManga(AbstractCtrl):
                 'num_capitulos': self.__selecionado_vol.num_capitulos,
                 'capitulos': self.__selecionado_vol.capitulos
             })
+        else:
+            self.__tela_manga.mostra_volume(None)
 
     def incluir_volume_manga(self):
         def logica_inclusao_volume(manga):
@@ -243,18 +245,19 @@ class CtrlManga(AbstractCtrl):
 
     def __executa_se_existe_manga(self, func_crud, remove_case = False):
         if self.__mangas:
-            while True:
-                try:
-                    manga = self.__selecionado_manga
-                    if manga != None:
-                        func_crud(manga)
-                        if not remove_case:
-                            self.__manga_dao.add(manga)
-                        break
-                    else:
-                        raise ExistenceException("manga", False)
-                except ExistenceException as error:
-                    self.__tela_manga.mostra_mensagem(f"{error}")
+            try:
+                manga = self.__selecionado_manga
+                if manga != None:
+                    func_crud(manga)
+                    if not remove_case:
+                        self.__manga_dao.add(manga)
+                else:
+                    raise ExistenceException("manga", False)
+            except ExistenceException as error:
+                self.__tela_manga.mostra_mensagem(f"{error}")
+        else:
+            self.__tela_manga.mostra_mensagem(
+                "Nenhum manga foi cadastrado!\n")
 
     def __executa_se_existe_volume_manga(self, manga, func_crud):
         if manga.volumes:

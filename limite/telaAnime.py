@@ -21,6 +21,8 @@ class TelaAnime(AbstractTela):
 
     def init_components(self, anime_list):
         self.__window = sg.Window('Biblioteca de Animes e Mangas', [
+            [sg.B(image_filename="limite/assets/images/back_btn.png",
+                  p=(0, 15), key=0)],
             [sg.T('ANIMES', justification='center', expand_x=True)],
             [sg.Listbox(
                 anime_list,
@@ -113,7 +115,7 @@ class TelaAnime(AbstractTela):
                 genero = super().le_texto("Gênero", values['genero'])
                 num_temporadas = super().le_num_inteiro(
                     "Nº Temporadas", values['num_temporadas'], minimo=1)
-            elif event == 'Cancelar':
+            elif event in ('Cancelar', None):
                 self.close()
                 return 'CANC'
             elif event == 'Temporada':
@@ -126,6 +128,8 @@ class TelaAnime(AbstractTela):
 
     def init_components_temporada(self, temporada_list):
         self.__window = sg.Window('Biblioteca de Animes e Mangas', [
+            [sg.B(image_filename="limite/assets/images/back_btn.png",
+                  p=(0, 15), key=0)],
             [sg.T('TEMPORADAS ANIME', justification='center', expand_x=True)],
             [sg.Listbox(
                 temporada_list,
@@ -190,7 +194,7 @@ class TelaAnime(AbstractTela):
                     "Número", values['numero'], minimo=1, maximo=n_temps)
                 num_episodios = super().le_num_inteiro(
                     "Nº Episódios", values['num_episodios'], minimo=1)
-            elif event == 'Cancelar':
+            elif event in ('Cancelar', None):
                 self.close()
                 return 'CANC'
             if all([numero, num_episodios]):
@@ -200,6 +204,8 @@ class TelaAnime(AbstractTela):
 
     def init_components_episodio(self, episodio_list):
         self.__window = sg.Window('Biblioteca de Animes e Mangas', [
+            [sg.B(image_filename="limite/assets/images/back_btn.png",
+                  p=(0, 15), key=0)],
             [sg.T('EPISODIOS TEMPORADA ANIME', justification='center', expand_x=True)],
             [sg.Listbox(
                 episodio_list,
@@ -258,7 +264,7 @@ class TelaAnime(AbstractTela):
                     "Número", values['numero'], minimo=1, maximo=n_eps)
                 duracao = super().le_num_inteiro(
                     "Duração (min)", values['duracao'], minimo=5)
-            elif event == 'Cancelar':
+            elif event in ('Cancelar', None):
                 self.close()
                 return 'CANC'
             if all([numero, duracao]):

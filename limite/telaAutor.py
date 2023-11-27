@@ -8,6 +8,8 @@ class TelaAutor(AbstractTela):
 
     def init_components(self, autor_list):
         self.__window = sg.Window('Biblioteca de Animes e Mangas', [
+            [sg.B(image_filename="limite/assets/images/back_btn.png",
+                  p=(0, 15), key=0)],
             [sg.T('AUTORES', justification='center', expand_x=True)],
             [sg.Listbox(
                 autor_list,
@@ -84,7 +86,7 @@ class TelaAutor(AbstractTela):
                 else:
                     attr = values['-LB-']
                     break
-            elif event == 'Cancelar':
+            elif event in ('Cancelar', None):
                 self.close()
                 return 'CANC'
             if attr:

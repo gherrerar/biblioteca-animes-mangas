@@ -8,6 +8,8 @@ class TelaUsuarioAdministrador(AbstractTela):
 
     def init_components(self, usuario_logado, usuario_list):
         self.__window = sg.Window('Biblioteca de Animes e Mangas', [
+            [sg.B(image_filename="limite/assets/images/back_btn.png",
+                  p=(0, 15), key=0)],
             [sg.B(image_filename="limite/assets/images/login_btn.png",
                   p=(0, 15), expand_x=True,
                   key=2) if not usuario_logado else (
@@ -59,10 +61,10 @@ class TelaUsuarioAdministrador(AbstractTela):
             if event == 'Confirmar':
                 nome = super().le_texto('Nome', values['nome'])
                 senha = super().le_texto('Senha', values['senha'])
-            if event == 'Cancelar' or all([nome, senha]):
+            if event in ('Cancelar', None) or all([nome, senha]):
                 break
         self.close()
-        return {'nome': nome, 'senha': senha} if event != 'Cancelar' else {}
+        return {'nome': nome, 'senha': senha} if event not in ('Cancelar', None) else {}
 
     def open(self):
         return self.__window.Read()
