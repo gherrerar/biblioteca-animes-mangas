@@ -17,3 +17,6 @@ class ExemplarManga(Exemplar):
     def manga(self, manga: Manga):
         if isinstance(manga, Manga):
             self.__manga = manga
+
+    def __repr__(self) -> int:
+        return f"{self.manga.titulo}"

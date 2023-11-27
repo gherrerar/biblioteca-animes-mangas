@@ -54,7 +54,7 @@ class TelaManga(AbstractTela):
                     [sg.T('ANO:')],
                     [sg.T('GENERO:')],
                     [sg.T('AUTOR:')],
-                    [sg.T('TEMPORADAS:')]
+                    [sg.T('VOLUMES:')]
                 ]),
                  sg.Col([
                      [sg.T(dados_manga['titulo'])],

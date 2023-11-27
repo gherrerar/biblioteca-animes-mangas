@@ -17,3 +17,6 @@ class ExemplarAnime(Exemplar):
     def anime(self, anime: Anime):
         if isinstance(anime, Anime):
             self.__anime = anime
+
+    def __repr__(self) -> int:
+        return f"{self.anime.titulo}"

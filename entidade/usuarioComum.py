@@ -11,6 +11,9 @@ class UsuarioComum(Usuario):
         self.__animes = []
         self.__mangas = []
 
+    def __repr__(self) -> int:
+        return f"{self.nome}"
+
     @property
     def animes(self) -> list[ExemplarAnime]:
         return self.__animes

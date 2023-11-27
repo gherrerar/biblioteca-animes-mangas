@@ -76,7 +76,6 @@ class TelaEstudio(AbstractTela):
 
         while True:
             event, values = self.open()
-            print(event, values)
 
             if event == 'Confirmar':
                 if not selecionado:

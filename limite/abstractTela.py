@@ -11,13 +11,10 @@ class AbstractTela(ABC):
     def le_num_inteiro(self,
                        titulo: str = "",
                        valor: str = "",
-                    #    nums_validos: [] = None,
                        minimo: int = None,
                        maximo: int = None) -> int:
         try:
             inteiro = int(valor)
-            # if nums_validos and inteiro not in nums_validos:
-            #     raise ValueError
             if (minimo and inteiro < minimo):
                 raise OutOfRangeException(minimo, 'min')
             if (maximo and inteiro > maximo):
@@ -26,8 +23,6 @@ class AbstractTela(ABC):
         except ValueError:
             self.mostra_mensagem(
                 f"{titulo}:\nValor incorreto! Digite um número inteiro valido")
-            # if nums_validos:
-            #     self.mostra_mensagem(">>> Valores válidos: ", *nums_validos)
         except OutOfRangeException as error:
             self.mostra_mensagem(
                 f"{titulo}:\nValor incorreto! Digite um número inteiro valido\n{error}")
