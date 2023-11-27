@@ -93,14 +93,14 @@ class UsuarioComum(Usuario):
         return self.__mangas[-3:][::-1]
 
     def principal_genero_animes(self) -> Genero | None:
-        lista_generos = [exemplar.anime.genero for exemplar in self.__animes]
+        lista_generos = [exemplar.anime.genero.nome for exemplar in self.__animes]
         if lista_generos:
             principal_genero = max(lista_generos, key=lista_generos.count)
             return principal_genero
         return None
 
     def principal_genero_mangas(self) -> Genero | None:
-        lista_generos = [exemplar.manga.genero for exemplar in self.__mangas]
+        lista_generos = [exemplar.manga.genero.nome for exemplar in self.__mangas]
         if lista_generos:
             principal_genero = max(lista_generos, key=lista_generos.count)
             return principal_genero

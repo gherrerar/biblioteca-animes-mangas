@@ -282,7 +282,7 @@ class TelaUsuarioComum(AbstractTela):
                     [sg.T('PRINCIPAL GENERO:')],
                 ]),
                  sg.Col([
-                    [sg.T(f'{genero.nome}')],
+                    [sg.T(f'{genero}')],
                 ])]
             ], modal=True).Read(close=True)
 
